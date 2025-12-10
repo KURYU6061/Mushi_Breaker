@@ -2,6 +2,74 @@
 // Mushi Breaker - 무기 증강 시스템 (파트 2)
 // ========================================
 
+// 번개 클래스 (지그재그 효과)
+class LightningBolt {
+  constructor(startX, startY, endX, endY, damage) {
+    this.startX = startX;
+    this.startY = startY;
+    this.endX = endX;
+    this.endY = endY;
+    this.damage = damage;
+    this.segments = [];
+    this.life = 3; // 3프레임 동안만 번쩍이고 사라짐
+    this.generatePath();
+  }
+
+  generatePath() {
+    const dx = this.endX - this.startX;
+    const dy = this.endY - this.startY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const steps = Math.max(3, Math.floor(distance / 15)); // 15픽셀마다 껋임
+
+    this.segments = [];
+    
+    for (let i = 0; i <= steps; i++) {
+      const progress = i / steps;
+      const targetX = this.startX + (dx * progress);
+      const targetY = this.startY + (dy * progress);
+
+      // 랜덤 오프셋 (전기의 불규칙함)
+      const jitter = (Math.random() - 0.5) * 25;
+      
+      // 수직 방향으로 흔들리게 (진행 방향에 수직)
+      const perpX = -dy / distance;
+      const perpY = dx / distance;
+      
+      const nextX = targetX + perpX * jitter;
+      const nextY = targetY + perpY * jitter;
+
+      this.segments.push({ x: nextX, y: nextY });
+    }
+  }
+
+  update() {
+    this.life--;
+  }
+
+  draw(ctx, worldToScreen) {
+    if (this.life <= 0 || this.segments.length < 2) return;
+
+    ctx.beginPath();
+    const startScreen = worldToScreen(this.startX, this.startY);
+    ctx.moveTo(startScreen.x, startScreen.y);
+
+    for (let point of this.segments) {
+      const screenPos = worldToScreen(point.x, point.y);
+      ctx.lineTo(screenPos.x, screenPos.y);
+    }
+
+    // 스타일링 (빛나는 효과)
+    ctx.strokeStyle = '#bffffd'; // 밝은 청록색 (전기 색)
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#00ffff';
+    ctx.stroke();
+    
+    // 션도우 초기화
+    ctx.shadowBlur = 0;
+  }
+}
+
 // 6. 전격 체인 (ELECTRIC_CHAIN)
 function updateElectricChain(deltaTime) {
   const augment = player.augments.find(a => a.id === 'ELECTRIC_CHAIN');
@@ -19,58 +87,80 @@ function updateElectricChain(deltaTime) {
     
     if (enemies.length === 0) return;
     
-    const startEnemy = enemies[Math.floor(Math.random() * enemies.length)];
+    // 가장 가까운 적 찾기
+    let nearestEnemy = null;
+    let minDist = Infinity;
     
-    lightnings.push({
-      x: startEnemy.x,
-      y: startEnemy.y,
-      damage: effectData.lightningDamage * player.statBonuses.attackPowerMult,
-      chainCount: effectData.chainCount,
-      chainRadius: 200,
-      targets: [startEnemy],
-      lifetime: 0.3,
-      age: 0,
-    });
+    for (const enemy of enemies) {
+      const dx = enemy.x - player.x;
+      const dy = enemy.y - player.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      if (dist < minDist) {
+        minDist = dist;
+        nearestEnemy = enemy;
+      }
+    }
+    
+    if (!nearestEnemy) return;
+    
+    // 초기 번개 생성 (플레이어 -> 첫 번째 적)
+    const damage = effectData.lightningDamage * player.statBonuses.attackPowerMult;
+    const bolt = new LightningBolt(player.x, player.y, nearestEnemy.x, nearestEnemy.y, damage);
+    bolt.targets = [nearestEnemy];
+    bolt.chainCount = effectData.chainCount;
+    bolt.chainRadius = 200;
+    lightnings.push(bolt);
+    
+    // 즉시 피해 적용
+    if (nearestEnemy.health > 0) {
+      nearestEnemy.health -= damage;
+    }
   }
   
+  // 번개 업데이트 및 체인
   for (let i = lightnings.length - 1; i >= 0; i--) {
     const lightning = lightnings[i];
-    lightning.age += deltaTime;
+    lightning.update();
     
-    if (lightning.age >= lightning.lifetime) {
-      for (const target of lightning.targets) {
-        if (target.health > 0) {
-          target.health -= lightning.damage;
+    // 수명 다하면 제거
+    if (lightning.life <= 0) {
+      lightnings.splice(i, 1);
+      continue;
+    }
+    
+    // 체인 효과 (첫 프레임에만 실행)
+    if (lightning.life === 2 && lightning.targets.length < lightning.chainCount) {
+      const lastTarget = lightning.targets[lightning.targets.length - 1];
+      
+      let nextEnemy = null;
+      let minDist = Infinity;
+      
+      for (const enemy of enemies) {
+        if (lightning.targets.includes(enemy)) continue;
+        
+        const dx = enemy.x - lastTarget.x;
+        const dy = enemy.y - lastTarget.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist <= lightning.chainRadius && dist < minDist) {
+          minDist = dist;
+          nextEnemy = enemy;
         }
       }
       
-      if (lightning.targets.length < lightning.chainCount) {
-        const lastTarget = lightning.targets[lightning.targets.length - 1];
+      // 다음 적을 찾았으면 새 번개 생성
+      if (nextEnemy) {
+        const newBolt = new LightningBolt(lastTarget.x, lastTarget.y, nextEnemy.x, nextEnemy.y, lightning.damage);
+        newBolt.targets = [...lightning.targets, nextEnemy];
+        newBolt.chainCount = lightning.chainCount;
+        newBolt.chainRadius = lightning.chainRadius;
+        lightnings.push(newBolt);
         
-        let nearestEnemy = null;
-        let minDist = Infinity;
-        
-        for (const enemy of enemies) {
-          if (lightning.targets.includes(enemy)) continue;
-          
-          const dx = enemy.x - lastTarget.x;
-          const dy = enemy.y - lastTarget.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          
-          if (dist <= lightning.chainRadius && dist < minDist) {
-            minDist = dist;
-            nearestEnemy = enemy;
-          }
+        // 피해 적용
+        if (nextEnemy.health > 0) {
+          nextEnemy.health -= lightning.damage;
         }
-        
-        if (nearestEnemy) {
-          lightning.targets.push(nearestEnemy);
-          lightning.age = 0;
-        } else {
-          lightnings.splice(i, 1);
-        }
-      } else {
-        lightnings.splice(i, 1);
       }
     }
   }

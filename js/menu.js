@@ -58,6 +58,7 @@ const characters = [
     nameKR: '밀렵꾼',
     nameEN: 'Poacher',
     color: '#4080ff',
+    image: 'img/player/hunter_Play.png',
     weapon: 'MACHINE_GUN',
     specialty: 'attackSpeed',
     specialtyKR: '공격 속도',
@@ -71,6 +72,7 @@ const characters = [
     nameKR: '방화범',
     nameEN: 'Arsonist',
     color: '#ff4444',
+    image: 'img/player/fireman_Play.png',
     weapon: 'FLAMETHROWER',
     specialty: 'attackRange',
     specialtyKR: '공격 범위',
@@ -84,6 +86,7 @@ const characters = [
     nameKR: '범죄자',
     nameEN: 'Criminal',
     color: '#ff8800',
+    image: 'img/player/criminal_Play.png',
     weapon: 'ELECTRIC_CHAIN',
     specialty: 'pickupRange',
     specialtyKR: '획득 범위',
@@ -209,10 +212,15 @@ let currentLanguage = 'KR';
 
 function drawMenu() {
   if (menuState.currentScreen === 'title') {
+    hideBackButton(); // 타이틀 화면에서는 뒤로가기 버튼 숨김
+    hideCharacterButtons(); // 캐릭터 버튼 숨김
     drawTitleScreen();
   } else if (menuState.currentScreen === 'mapSelect') {
+    hideTitleButtons(); // 맵 선택 화면에서는 버튼 숨김
+    hideCharacterButtons(); // 캐릭터 버튼 숨김
     drawMapSelectScreen();
   } else if (menuState.currentScreen === 'characterSelect') {
+    hideTitleButtons(); // 캐릭터 선택 화면에서는 버튼 숨김
     drawCharacterSelectScreen();
   }
   
@@ -245,20 +253,8 @@ function drawTitleScreen() {
     ctx.fillText(t.title, GAME_WIDTH / 2, 150);
   }
   
-  // 버튼들
-  const buttonWidth = 300;
-  const buttonHeight = 60;
-  const buttonX = GAME_WIDTH / 2 - buttonWidth / 2;
-  const buttonSpacing = 80;
-  
-  // 게임 시작 버튼
-  drawButton(buttonX, 300, buttonWidth, buttonHeight, t.startButton, '#4ecdc4');
-  
-  // 언어 선택 버튼
-  drawButton(buttonX, 300 + buttonSpacing, buttonWidth, buttonHeight, t.languageButton, '#45b7d1');
-  
-  // 게임 설명 버튼
-  drawButton(buttonX, 300 + buttonSpacing * 2, buttonWidth, buttonHeight, t.guideButton, '#96ceb4');
+  // DOM 버튼 표시 (Canvas 버튼 대신 이미지 버튼 사용)
+  showTitleButtons();
 }
 
 function drawMapSelectScreen() {
@@ -278,13 +274,13 @@ function drawMapSelectScreen() {
     ctx.fillText(currentLanguage === 'KR' ? 'MAP SELECT' : 'MAP SELECT', GAME_WIDTH / 2, 80);
   }
   
-  // 뒤로가기 버튼 (우측 상단)
-  drawBackButton(GAME_WIDTH - 80, 30);
+  // 뒤로가기 버튼 표시
+  showBackButton();
   
   // 맵 선택 카드들
-  const cardWidth = 300;
-  const cardHeight = 350;
-  const cardSpacing = 50;
+  const cardWidth = 340;
+  const cardHeight = 320;
+  const cardSpacing = 60;
   const totalWidth = (cardWidth * 3) + (cardSpacing * 2);
   const startX = (GAME_WIDTH - totalWidth) / 2;
   const cardY = 200;
@@ -293,42 +289,42 @@ function drawMapSelectScreen() {
     const map = maps[i];
     const x = startX + i * (cardWidth + cardSpacing);
     
-    // 카드 배경
-    ctx.fillStyle = map.bgColor;
-    ctx.fillRect(x, cardY, cardWidth, cardHeight);
+    // 카드 배경 (투명)
+    // ctx.fillStyle = map.bgColor;
+    // ctx.fillRect(x, cardY, cardWidth, cardHeight);
     
-    // 카드 테두리
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(x, cardY, cardWidth, cardHeight);
+    // 카드 테두리 (투명)
+    // ctx.strokeStyle = '#ffffff';
+    // ctx.lineWidth = 3;
+    // ctx.strokeRect(x, cardY, cardWidth, cardHeight);
     
-    // 맵 미리보기 (작은 그리드)
-    ctx.fillStyle = map.color;
-    ctx.fillRect(x + 20, cardY + 20, cardWidth - 40, 200);
+    // 맵 미리보기 (작은 그리드) (투명)
+    // ctx.fillStyle = map.color;
+    // ctx.fillRect(x + 20, cardY + 20, cardWidth - 40, 200);
     
-    // 그리드 라인
-    ctx.strokeStyle = map.gridColor;
-    ctx.lineWidth = 1;
-    for (let gx = 0; gx < 5; gx++) {
-      const lineX = x + 20 + (gx * (cardWidth - 40) / 4);
-      ctx.beginPath();
-      ctx.moveTo(lineX, cardY + 20);
-      ctx.lineTo(lineX, cardY + 220);
-      ctx.stroke();
-    }
-    for (let gy = 0; gy < 5; gy++) {
-      const lineY = cardY + 20 + (gy * 200 / 4);
-      ctx.beginPath();
-      ctx.moveTo(x + 20, lineY);
-      ctx.lineTo(x + cardWidth - 20, lineY);
-      ctx.stroke();
-    }
+    // 그리드 라인 (투명)
+    // ctx.strokeStyle = map.gridColor;
+    // ctx.lineWidth = 1;
+    // for (let gx = 0; gx < 5; gx++) {
+    //   const lineX = x + 20 + (gx * (cardWidth - 40) / 4);
+    //   ctx.beginPath();
+    //   ctx.moveTo(lineX, cardY + 20);
+    //   ctx.lineTo(lineX, cardY + 220);
+    //   ctx.stroke();
+    // }
+    // for (let gy = 0; gy < 5; gy++) {
+    //   const lineY = cardY + 20 + (gy * 200 / 4);
+    //   ctx.beginPath();
+    //   ctx.moveTo(x + 20, lineY);
+    //   ctx.lineTo(x + cardWidth - 20, lineY);
+    //   ctx.stroke();
+    // }
     
-    // 맵 이름
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 32px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(currentLanguage === 'KR' ? map.nameKR : map.nameEN, x + cardWidth / 2, cardY + 280);
+    // 맵 이름 (투명)
+    // ctx.fillStyle = '#ffffff';
+    // ctx.font = 'bold 32px Arial';
+    // ctx.textAlign = 'center';
+    // ctx.fillText(currentLanguage === 'KR' ? map.nameKR : map.nameEN, x + cardWidth / 2, cardY + 280);
   }
 }
 
@@ -349,110 +345,44 @@ function drawCharacterSelectScreen() {
   ctx.textBaseline = 'middle';
   ctx.fillText(currentLanguage === 'KR' ? 'CHARACTER SELECT' : 'CHARACTER SELECT', GAME_WIDTH / 2, 80);
   
-  // 뒤로가기 버튼 (우측 상단)
-  drawBackButton(GAME_WIDTH - 80, 30);
+  // 뒤로가기 버튼 표시
+  showBackButton();
   
-  // 캐릭터 카드들
-  const cardWidth = 320;
-  const cardHeight = 450;
-  const cardSpacing = 40;
-  const startX = 150;
-  const cardY = 150;
-  
-  for (let i = 0; i < characters.length; i++) {
-    const char = characters[i];
-    const x = startX + i * (cardWidth + cardSpacing) - menuState.characterScrollOffset;
-    
-    // 화면 밖이면 건너뛰기
-    if (x + cardWidth < 0 || x > GAME_WIDTH) continue;
-    
-    // 카드 배경
-    ctx.fillStyle = '#2d2d44';
-    ctx.fillRect(x, cardY, cardWidth, cardHeight);
-    
-    // 카드 테두리
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(x, cardY, cardWidth, cardHeight);
-    
-    // 캐릭터 원 (미리보기)
-    ctx.fillStyle = char.color;
-    ctx.beginPath();
-    ctx.arc(x + cardWidth / 2, cardY + 120, 80, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    
-    // 캐릭터 이름
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 28px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(currentLanguage === 'KR' ? char.nameKR : char.nameEN, x + cardWidth / 2, cardY + 240);
-    
-    // 시작 무기
-    ctx.font = '20px Arial';
-    ctx.fillText(currentLanguage === 'KR' ? '시작 무기:' : 'Starting Weapon:', x + cardWidth / 2, cardY + 280);
-    
-    const weaponData = AUGMENT_TYPES[char.weapon];
-    if (weaponData) {
-      ctx.font = 'bold 22px Arial';
-      ctx.fillStyle = '#4ecdc4';
-      ctx.fillText(currentLanguage === 'KR' ? weaponData.name : weaponData.name, x + cardWidth / 2, cardY + 310);
-    }
-    
-    // 특화 능력
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '20px Arial';
-    ctx.fillText(currentLanguage === 'KR' ? '특화:' : 'Specialty:', x + cardWidth / 2, cardY + 350);
-    ctx.font = 'bold 22px Arial';
-    ctx.fillStyle = '#ffeb3b';
-    ctx.fillText(currentLanguage === 'KR' ? char.specialtyKR : char.specialtyEN, x + cardWidth / 2, cardY + 380);
-    
-    // 선택 버튼
-    const btnWidth = 200;
-    const btnHeight = 40;
-    const btnX = x + (cardWidth - btnWidth) / 2;
-    const btnY = cardY + cardHeight - 60;
-    
-    ctx.fillStyle = '#4ecdc4';
-    ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(btnX, btnY, btnWidth, btnHeight);
-    
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 20px Arial';
-    ctx.fillText(currentLanguage === 'KR' ? '선택' : 'Select', x + cardWidth / 2, btnY + btnHeight / 2);
+  // 캐릭터 선택 DOM 버튼 표시
+  showCharacterButtons();
+}
+
+function showBackButton() {
+  const backButton = document.getElementById('backButton');
+  if (backButton) {
+    backButton.style.display = 'block';
   }
-  
-  // 스크롤 안내
-  if (characters.length > 2) {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-    ctx.font = '18px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(currentLanguage === 'KR' ? '← 드래그하여 스크롤 →' : '← Drag to Scroll →', GAME_WIDTH / 2, GAME_HEIGHT - 30);
+}
+
+function hideBackButton() {
+  const backButton = document.getElementById('backButton');
+  if (backButton) {
+    backButton.style.display = 'none';
+  }
+}
+
+function showCharacterButtons() {
+  const characterButtons = document.getElementById('characterSelectButtons');
+  if (characterButtons) {
+    characterButtons.style.display = 'flex';
+  }
+}
+
+function hideCharacterButtons() {
+  const characterButtons = document.getElementById('characterSelectButtons');
+  if (characterButtons) {
+    characterButtons.style.display = 'none';
   }
 }
 
 function drawBackButton(x, y) {
-  const size = 40;
-  
-  // 버튼 배경
-  ctx.fillStyle = '#45b7d1';
-  ctx.fillRect(x, y, size, size);
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(x, y, size, size);
-  
-  // 화살표
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(x + size * 0.6, y + size * 0.3);
-  ctx.lineTo(x + size * 0.3, y + size * 0.5);
-  ctx.lineTo(x + size * 0.6, y + size * 0.7);
-  ctx.stroke();
+  // Canvas 뒤로가기 버튼 그리기는 이제 DOM 버튼으로 대체됨
+  showBackButton();
 }
 
 function drawButton(x, y, width, height, text, color) {
@@ -673,6 +603,7 @@ function handleLanguageModalClick(clickX, clickY) {
   if (clickX >= modalX + modalWidth - 40 && clickX <= modalX + modalWidth - 10 &&
       clickY >= modalY + 10 && clickY <= modalY + 40) {
     menuState.showingLanguageModal = false;
+    showTitleButtons();
     return;
   }
   
@@ -682,6 +613,7 @@ function handleLanguageModalClick(clickX, clickY) {
       clickY >= langButtonY && clickY <= langButtonY + 50) {
     currentLanguage = 'KR';
     menuState.showingLanguageModal = false;
+    showTitleButtons();
     return;
   }
   
@@ -690,6 +622,7 @@ function handleLanguageModalClick(clickX, clickY) {
       clickY >= langButtonY && clickY <= langButtonY + 50) {
     currentLanguage = 'EN';
     menuState.showingLanguageModal = false;
+    showTitleButtons();
     return;
   }
 }
@@ -704,6 +637,7 @@ function handleGuideModalClick(clickX, clickY, t) {
   if (clickX >= modalX + modalWidth - 40 && clickX <= modalX + modalWidth - 10 &&
       clickY >= modalY + 10 && clickY <= modalY + 40) {
     menuState.showingGuideModal = false;
+    showTitleButtons();
     return;
   }
   
@@ -730,31 +664,8 @@ function handleGuideModalClick(clickX, clickY, t) {
 }
 
 function handleTitleScreenClick(clickX, clickY, t) {
-  const buttonWidth = 300;
-  const buttonHeight = 60;
-  const buttonX = GAME_WIDTH / 2 - buttonWidth / 2;
-  const buttonSpacing = 80;
-  
-  // 게임 시작 버튼 - 맵 선택으로 이동
-  if (clickX >= buttonX && clickX <= buttonX + buttonWidth &&
-      clickY >= 300 && clickY <= 300 + buttonHeight) {
-    menuState.currentScreen = 'mapSelect';
-    return;
-  }
-  
-  // 언어 선택 버튼
-  if (clickX >= buttonX && clickX <= buttonX + buttonWidth &&
-      clickY >= 300 + buttonSpacing && clickY <= 300 + buttonSpacing + buttonHeight) {
-    menuState.showingLanguageModal = true;
-    return;
-  }
-  
-  // 게임 설명 버튼
-  if (clickX >= buttonX && clickX <= buttonX + buttonWidth &&
-      clickY >= 300 + buttonSpacing * 2 && clickY <= 300 + buttonSpacing * 2 + buttonHeight) {
-    menuState.showingGuideModal = true;
-    return;
-  }
+  // 타이틀 화면의 클릭은 이제 DOM 버튼 이벤트로 처리됨
+  // Canvas 클릭은 비활성화 (모달이 없을 때)
 }
 
 function handleMapSelectClick(clickX, clickY) {
@@ -766,13 +677,14 @@ function handleMapSelectClick(clickX, clickY) {
   if (clickX >= backX && clickX <= backX + backSize &&
       clickY >= backY && clickY <= backY + backSize) {
     menuState.currentScreen = 'title';
+    showTitleButtons();
     return;
   }
   
   // 맵 카드 클릭
   const cardWidth = 300;
   const cardHeight = 350;
-  const cardSpacing = 50;
+  const cardSpacing = 80;
   const totalWidth = (cardWidth * 3) + (cardSpacing * 2);
   const startX = (GAME_WIDTH - totalWidth) / 2;
   const cardY = 200;
@@ -869,8 +781,15 @@ function startGameWithCharacter(character) {
   };
   Object.assign(player.statBonuses, character.bonuses);
   
-  // 캐릭터 색상 적용
+  // 캐릭터 색상 및 이미지 적용
   player.color = character.color;
+  player.image = character.image;
+  
+  // 캐릭터 이미지 로드
+  if (character.image) {
+    player.imageObj = new Image();
+    player.imageObj.src = character.image;
+  }
   
   // 선택된 맵 적용
   if (menuState.selectedMap) {
@@ -906,6 +825,11 @@ function startGameWithCharacter(character) {
     slot.style.borderColor = '';
     slot.style.boxShadow = '';
   });
+  
+  // DOM 버튼 숨기기
+  hideTitleButtons();
+  hideBackButton();
+  hideCharacterButtons();
   
   // 게임 시작
   menuState.isShowingMenu = false;
@@ -990,9 +914,98 @@ function handleMenuWheel(e) {
 // 현재 맵 설정 (전역)
 let currentMap = maps[0];
 
+// ========================================
+// DOM 버튼 관리
+// ========================================
+
+function showTitleButtons() {
+  const titleButtons = document.getElementById('titleMenuButtons');
+  if (titleButtons && menuState.currentScreen === 'title' && !menuState.showingLanguageModal && !menuState.showingGuideModal) {
+    titleButtons.style.display = 'flex';
+  }
+}
+
+function hideTitleButtons() {
+  const titleButtons = document.getElementById('titleMenuButtons');
+  if (titleButtons) {
+    titleButtons.style.display = 'none';
+  }
+}
+
+function initTitleButtons() {
+  const startBtn = document.getElementById('startGameBtn');
+  const langBtn = document.getElementById('languageBtn');
+  const guideBtn = document.getElementById('guideBtn');
+  
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      hideTitleButtons();
+      menuState.currentScreen = 'mapSelect';
+    });
+  }
+  
+  if (langBtn) {
+    langBtn.addEventListener('click', () => {
+      hideTitleButtons();
+      menuState.showingLanguageModal = true;
+    });
+  }
+  
+  if (guideBtn) {
+    guideBtn.addEventListener('click', () => {
+      hideTitleButtons();
+      menuState.showingGuideModal = true;
+    });
+  }
+}
+
+function initBackButton() {
+  const backBtn = document.getElementById('backButton');
+  
+  if (backBtn) {
+    backBtn.addEventListener('click', () => {
+      if (menuState.currentScreen === 'mapSelect') {
+        hideBackButton();
+        menuState.currentScreen = 'title';
+        showTitleButtons();
+      } else if (menuState.currentScreen === 'characterSelect') {
+        hideCharacterButtons();
+        menuState.currentScreen = 'mapSelect';
+      }
+    });
+  }
+}
+
+function initCharacterButtons() {
+  const characterBtns = [
+    { id: 'characterBtn1', character: characters[0] },
+    { id: 'characterBtn2', character: characters[1] },
+    { id: 'characterBtn3', character: characters[2] }
+  ];
+  
+  characterBtns.forEach(({ id, character }) => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', () => {
+        hideCharacterButtons();
+        hideBackButton();
+        startGameWithCharacter(character);
+      });
+    }
+  });
+}
+
 // 페이지 로드 시 이벤트 초기화
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initMenuEvents);
+  document.addEventListener('DOMContentLoaded', () => {
+    initMenuEvents();
+    initTitleButtons();
+    initBackButton();
+    initCharacterButtons();
+  });
 } else {
   initMenuEvents();
+  initTitleButtons();
+  initBackButton();
+  initCharacterButtons();
 }

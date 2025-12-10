@@ -58,6 +58,8 @@ const player = {
   attackTimer: 0,
   projectileSpeed: 400,
   color: '#4080ff',
+  image: null, // 캐릭터 이미지 경로
+  imageObj: null, // 로드된 이미지 객체
   
   augments: [{ id: 'MACHINE_GUN', level: 1 }],
   selectedStats: [], // 선택된 스텟 증강 기록

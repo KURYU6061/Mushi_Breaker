@@ -12,6 +12,44 @@
   <div id="gameContainer">
     <canvas id="gameCanvas"></canvas>
     
+    <!-- 타이틀 메뉴 버튼들 (Canvas 위 오버레이) -->
+    <div id="titleMenuButtons" style="display: none;">
+      <button id="startGameBtn" class="pixel-btn" data-action="start"></button>
+      <button id="languageBtn" class="pixel-btn" data-action="language"></button>
+      <button id="guideBtn" class="pixel-btn" data-action="guide"></button>
+    </div>
+    
+    <!-- 뒤로가기 버튼 -->
+    <button id="backButton" class="back-btn" style="display: none;"></button>
+    
+    <!-- 캐릭터 선택 버튼들 -->
+    <div id="characterSelectButtons" style="display: none;">
+      <button id="characterBtn1" class="character-btn" data-character="poacher">
+        <div class="character-image" style="background-image: url('img/player/hunter_Stand.png');"></div>
+        <div class="character-info">
+          <h3 class="character-name">밀렵꾼</h3>
+          <p class="character-weapon">시작 무기: <span>속사 기관총</span></p>
+          <p class="character-specialty">특화: <span>공격 속도</span></p>
+        </div>
+      </button>
+      <button id="characterBtn2" class="character-btn" data-character="arsonist">
+        <div class="character-image" style="background-image: url('img/player/fireman_Stand.png');"></div>
+        <div class="character-info">
+          <h3 class="character-name">방화범</h3>
+          <p class="character-weapon">시작 무기: <span>화염 방사기</span></p>
+          <p class="character-specialty">특화: <span>공격 범위</span></p>
+        </div>
+      </button>
+      <button id="characterBtn3" class="character-btn" data-character="criminal">
+        <div class="character-image" style="background-image: url('img/player/criminal_Stand.png');"></div>
+        <div class="character-info">
+          <h3 class="character-name">범죄자</h3>
+          <p class="character-weapon">시작 무기: <span>전기 체인</span></p>
+          <p class="character-specialty">특화: <span>획득 범위</span></p>
+        </div>
+      </button>
+    </div>
+    
     <!-- Canvas 오버레이 (Canvas 크기에 맞춰 스케일링) -->
     <div id="canvasOverlay">
       <!-- UI 오버레이 -->

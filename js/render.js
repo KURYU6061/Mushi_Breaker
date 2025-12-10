@@ -119,21 +119,7 @@ function drawWeaponEffects() {
     particle.draw(ctx, screenPos);
   }
   
-  // 화염 패치 (기존 시스템 - 피해 판정용)
-  for (const fire of firePatches) {
-    const screenPos = worldToScreen(fire.x, fire.y);
-    const alpha = Math.max(0.3, 1 - fire.age / fire.duration);
-    
-    ctx.fillStyle = `rgba(255, 100, 0, ${alpha * 0.6})`;
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, fire.radius, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.fillStyle = `rgba(255, 200, 0, ${alpha * 0.8})`;
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, fire.radius * 0.6, 0, Math.PI * 2);
-    ctx.fill();
-  }
+  // 화염 패치 렌더링 제거 (피해 판정은 유지, 시각 효과만 제거)
   
   for (const drone of drones) {
     const screenPos = worldToScreen(drone.x, drone.y);
@@ -171,22 +157,9 @@ function drawWeaponEffects() {
   }
   
   for (const lightning of lightnings) {
-    ctx.strokeStyle = 'rgba(255, 255, 100, 0.8)';
-    ctx.lineWidth = 3;
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = '#ffff00';
-    
-    for (let i = 0; i < lightning.targets.length - 1; i++) {
-      const from = worldToScreen(lightning.targets[i].x, lightning.targets[i].y);
-      const to = worldToScreen(lightning.targets[i + 1].x, lightning.targets[i + 1].y);
-      
-      ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.lineTo(to.x, to.y);
-      ctx.stroke();
+    if (lightning instanceof LightningBolt) {
+      lightning.draw(ctx, worldToScreen);
     }
-    
-    ctx.shadowBlur = 0;
   }
   
   for (const disk of disks) {
@@ -235,20 +208,46 @@ function drawWeaponEffects() {
 function drawPlayer() {
   const screenPos = worldToScreen(player.x, player.y);
   
-  ctx.fillStyle = player.color || '#4080ff';
-  ctx.beginPath();
-  ctx.arc(screenPos.x, screenPos.y, player.size / 2, 0, Math.PI * 2);
-  ctx.fill();
-  
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(screenPos.x, screenPos.y);
-  ctx.lineTo(
-    screenPos.x + Math.cos(player.facingAngle) * player.size,
-    screenPos.y + Math.sin(player.facingAngle) * player.size
-  );
-  ctx.stroke();
+  // 캐릭터 이미지가 로드되었으면 이미지로 그리기
+  if (player.imageObj && player.imageObj.complete) {
+    const imageSize = player.size * 2; // 이미지 크기
+    
+    // 사냥꾼 캐릭터만 50도 추가 회전
+    const extraRotation = player.image === 'img/player/hunter_Play.png' ? (50 * Math.PI / 180) : 0;
+    
+    ctx.save();
+    ctx.translate(screenPos.x, screenPos.y);
+    ctx.rotate(player.facingAngle - Math.PI / 2 + extraRotation); // 이미지 회전 (사냥꾼은 30도 추가)
+    
+    // 픽셀 아트가 흐려지지 않게
+    ctx.imageSmoothingEnabled = false;
+    
+    ctx.drawImage(
+      player.imageObj,
+      -imageSize / 2,
+      -imageSize / 2,
+      imageSize,
+      imageSize
+    );
+    ctx.restore();
+  } else {
+    // 이미지가 없거나 로드 중일 때 기본 동그라미
+    ctx.fillStyle = player.color || '#4080ff';
+    ctx.beginPath();
+    ctx.arc(screenPos.x, screenPos.y, player.size / 2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // 방향 표시 화살표
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(screenPos.x, screenPos.y);
+    ctx.lineTo(
+      screenPos.x + Math.cos(player.facingAngle) * player.size,
+      screenPos.y + Math.sin(player.facingAngle) * player.size
+    );
+    ctx.stroke();
+  }
 }
 
 function drawEnemies() {
