@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mushi Breaker</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/ui.css">
+  <link rel="stylesheet" href="css/levelup.css">
+</head>
+<body>
+  <div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+    
+    <!-- Canvas 오버레이 (Canvas 크기에 맞춰 스케일링) -->
+    <div id="canvasOverlay">
+      <!-- UI 오버레이 -->
+      <div id="gameUI" style="display: none;">
+        <!-- 증강 슬롯 그룹 (중앙) -->
+        <div id="slotsContainer">
+          <!-- 증강 슬롯 (무기) -->
+          <div id="augmentSlots">
+            <div class="augment-slot"></div>
+            <div class="augment-slot"></div>
+            <div class="augment-slot"></div>
+            <div class="augment-slot"></div>
+            <div class="augment-slot"></div>
+          </div>
+          
+          <!-- 스텟 슬롯 -->
+          <div id="statSlots">
+            <div class="stat-slot"></div>
+            <div class="stat-slot"></div>
+            <div class="stat-slot"></div>
+            <div class="stat-slot"></div>
+            <div class="stat-slot"></div>
+          </div>
+        </div>
+        
+        <!-- 체력바 (경험치바 바로 위) -->
+        <div id="healthBar">
+          <div id="healthFill"></div>
+          <span id="healthText">100/100</span>
+        </div>
+        
+        <!-- 경험치바 (맨 아래) -->
+        <div id="expBar">
+          <div id="expFill"></div>
+          <span id="levelText">레벨 1</span>
+        </div>
+      </div>
+      
+      <!-- 레벨업 선택 화면 (숨김) -->
+      <div id="levelUpScreen" class="hidden">
+        <h2>숙련도 상승!</h2>
+        <div id="augmentChoices"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="js/constants.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/collision.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/enemies.js"></script>
+  <script src="js/weapons1.js"></script>
+  <script src="js/weapons2.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
