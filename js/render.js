@@ -80,6 +80,8 @@ function drawMap() {
     mapEndScreen.y - mapScreen.y
   );
   
+  // 그리드 라인 비활성화
+  /*
   const gridColor = (typeof currentMap !== 'undefined') ? currentMap.gridColor : '#333';
   ctx.strokeStyle = gridColor;
   ctx.lineWidth = 1;
@@ -105,6 +107,7 @@ function drawMap() {
     ctx.lineTo(GAME_WIDTH, screenPos.y);
     ctx.stroke();
   }
+  */
 }
 
 function drawWeaponEffects() {
