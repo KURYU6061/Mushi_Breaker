@@ -552,36 +552,15 @@ function showVictoryScreen() {
   const mapSelectBtn = createButton('맵 선택', '#4a90e2');
   mapSelectBtn.onclick = () => {
     canvasOverlay.style.display = 'none';
-    if (typeof menuState !== 'undefined') {
-      menuState.isShowingMenu = true;
-      menuState.currentScreen = 'mapSelect';
-    }
+    location.reload();
   };
   buttonsContainer.appendChild(mapSelectBtn);
-  
-  // 재시도 버튼
-  const retryBtn = createButton('재시도', '#e67e22');
-  retryBtn.onclick = () => {
-    canvasOverlay.style.display = 'none';
-    // 현재 선택된 캐릭터로 게임 재시작
-    if (typeof menuState !== 'undefined' && menuState.selectedCharacter) {
-      startGameWithCharacter(menuState.selectedCharacter);
-    } else {
-      location.reload();
-    }
-  };
-  buttonsContainer.appendChild(retryBtn);
   
   // 메인 화면 버튼
   const mainBtn = createButton('메인 화면', '#e74c3c');
   mainBtn.onclick = () => {
     canvasOverlay.style.display = 'none';
-    if (typeof menuState !== 'undefined') {
-      menuState.isShowingMenu = true;
-      menuState.currentScreen = 'title';
-    } else {
-      location.reload();
-    }
+    location.reload();
   };
   buttonsContainer.appendChild(mainBtn);
   
@@ -725,19 +704,6 @@ function showGameOverScreen() {
     };
     return btn;
   };
-  
-  // 재시도 버튼
-  const retryBtn = createButton('🔄 재시도', '#e67e22');
-  retryBtn.onclick = () => {
-    canvasOverlay.style.display = 'none';
-    // 현재 선택된 캐릭터로 게임 재시작
-    if (typeof menuState !== 'undefined' && menuState.selectedCharacter) {
-      startGameWithCharacter(menuState.selectedCharacter);
-    } else {
-      location.reload();
-    }
-  };
-  buttonsContainer.appendChild(retryBtn);
   
   // 메인 화면 버튼
   const mainBtn = createButton('🏠 메인 화면', '#e74c3c');

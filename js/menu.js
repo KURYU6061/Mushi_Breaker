@@ -774,15 +774,25 @@ function startGameWithCharacter(character) {
     game.currentMap = menuState.selectedMap.id;
   }
   
-  // 플레이어 위치 초기화
+  // 플레이어 완전 초기화
   player.x = MAP_SIZE / 2;
   player.y = MAP_SIZE / 2;
   player.health = 100;
+  player.maxHealth = 100;
   player.level = 1;
   player.exp = 0;
+  player.expToNextLevel = 100;
+  player.facingAngle = 0;
+  player.invincibleTime = 0;
+  player.rerollCount = 0;
+  player.canReroll = true;
   
-  // 기존 증강 초기화
+  // 증강 및 스탯 초기화
   player.augments = [{ id: character.weapon, level: 1 }];
+  player.selectedAugments = []; // 선택된 증강 기록 초기화
+  player.selectedStats = []; // 선택된 스탯 초기화
+  player.statLevels = {}; // 스탯 레벨 초기화
+  player.statPreference = {}; // 스탯 선호도 초기화
   
   // 스탯 보너스 초기화 및 캐릭터 특화 적용
   player.statBonuses = {
