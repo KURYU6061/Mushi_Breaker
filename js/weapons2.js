@@ -265,7 +265,8 @@ class RicochetDisk {
     this.x = x;
     this.y = y;
     this.isEvolved = isEvolved;
-    this.speed = isEvolved ? 10 : 8;
+    const baseSpeed = isEvolved ? 500 : 400;
+    this.speed = baseSpeed * player.statBonuses.projectileSpeedMult;
     this.vx = Math.cos(angle) * this.speed;
     this.vy = Math.sin(angle) * this.speed;
     
@@ -286,8 +287,7 @@ class RicochetDisk {
   update(deltaTime) {
     this.x += this.vx * deltaTime;
     this.y += this.vy * deltaTime;
-    this.rotation += this.rotationSpeed;
-    this.life--;
+    this.rotation += this.rotationSpeed * deltaTime * 10;
     this.age += deltaTime;
   }
 

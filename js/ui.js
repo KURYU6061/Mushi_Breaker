@@ -369,8 +369,8 @@ function updateUI() {
       const statAug = STAT_AUGMENTS[statKey];
       if (!statAug) return;
       
-      // 해당 스탯을 몇 번 선택했는지 계산
-      const level = Math.floor((player.statPreference[statAug.statType] || 0) / 0.2);
+      // 해당 스탯의 실제 레벨 사용
+      const level = player.statLevels[statAug.statType] || 0;
       
       statSlots[index].classList.add('active');
       statSlots[index].innerHTML = `
