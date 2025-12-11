@@ -119,6 +119,5 @@ function gameLoop(currentTime) {
   requestAnimationFrame(gameLoop);
 }
 
-console.log('Mushi Breaker 게임 시작!');
-
-requestAnimationFrame(gameLoop);
+// 게임 루프는 loader.js의 initGame()에서 시작됨
+console.log('Mushi Breaker ready!');
