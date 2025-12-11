@@ -4,42 +4,42 @@
 
 #levelUpScreen {
   position: absolute;
-  top: 15%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -50%);
   background-color: rgba(0, 0, 0, 0.95);
-  border: 3px solid #ffd700;
-  border-radius: 10px;
-  padding: 20px;
+  border: 4px solid #ffd700;
+  border-radius: 14px;
+  padding: 28px;
   z-index: 100;
-  width: 1000px;
+  width: 1400px;
   max-width: 95vw;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
 }
 
 #levelUpScreen h2 {
   color: #ffd700;
   text-align: center;
-  margin-bottom: 12px;
-  font-size: 24px;
+  margin-bottom: 17px;
+  font-size: 34px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 #augmentChoices {
   display: flex;
-  gap: 10px;
+  gap: 14px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .augment-choice {
-  width: 135px;
-  min-width: 110px;
-  padding: 10px;
+  width: 189px;
+  min-width: 154px;
+  padding: 14px;
   background-color: rgba(50, 50, 50, 0.9);
-  border: 2px solid #fff;
-  border-radius: 8px;
+  border: 3px solid #fff;
+  border-radius: 11px;
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
@@ -75,40 +75,40 @@
 }
 
 .augment-icon {
-  font-size: 38px;
-  margin-bottom: 7px;
+  font-size: 53px;
+  margin-bottom: 10px;
 }
 
 .augment-choice h3 {
   color: #ffd700;
-  margin-bottom: 4px;
-  font-size: 14px;
+  margin-bottom: 6px;
+  font-size: 20px;
 }
 
 .augment-level {
   color: #aaa;
-  font-size: 11px;
-  margin-bottom: 5px;
+  font-size: 15px;
+  margin-bottom: 7px;
 }
 
 .augment-choice p {
   color: #fff;
-  font-size: 11px;
-  line-height: 1.3;
+  font-size: 15px;
+  line-height: 1.4;
 }
 
 .evolution-requirement {
   color: #ff9900;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: bold;
-  margin: 5px 0;
+  margin: 7px 0;
 }
 
 .evolution-ready {
   color: #00ff00;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: bold;
-  margin: 5px 0;
+  margin: 7px 0;
   animation: pulse 1s infinite;
 }
 
@@ -119,17 +119,17 @@
 
 #rerollButton {
   width: 100%;
-  padding: 11px;
+  padding: 15px;
   background-color: rgba(100, 100, 100, 0.9);
-  border: 2px solid #aaa;
-  border-radius: 8px;
+  border: 3px solid #aaa;
+  border-radius: 11px;
   cursor: pointer;
   transition: all 0.2s;
   text-align: center;
   color: #fff;
-  font-size: 15px;
+  font-size: 21px;
   font-weight: bold;
-  margin-top: 9px;
+  margin-top: 13px;
 }
 
 #rerollButton:hover:not([style*="cursor: not-allowed"]) {
