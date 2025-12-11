@@ -108,8 +108,16 @@ function getAugmentChoices() {
 }
 
 function showLevelUpScreen() {
+  const lang = typeof currentLanguage !== 'undefined' ? currentLanguage : 'KR';
   const screen = document.getElementById('levelUpScreen');
+  const title = document.getElementById('levelUpTitle');
   const choices = document.getElementById('augmentChoices');
+  
+  // 제목 번역
+  if (title) {
+    title.textContent = lang === 'EN' ? 'Skill Up!' : '숙련도 상승!';
+  }
+  
   choices.innerHTML = '';
   
   const augmentChoices = getAugmentChoices();
@@ -156,10 +164,11 @@ function showLevelUpScreen() {
         }
       }
       
+      const levelText = lang === 'EN' ? 'Level' : '레벨';
       div.innerHTML = `
         <div class="augment-icon">${aug.icon}</div>
         <h3>${displayName}</h3>
-        <p class="augment-level">레벨 ${currentLevel} → ${nextLevel}${isMaxed ? ' (MAX)' : ''}</p>
+        <p class="augment-level">${levelText} ${currentLevel} → ${nextLevel}${isMaxed ? ' (MAX)' : ''}</p>
         ${evolutionStatus}
         <p>${displayDesc}</p>
       `;
@@ -189,7 +198,8 @@ function showLevelUpScreen() {
   rerollDiv.id = 'rerollButton';
   
   if (player.canReroll) {
-    rerollDiv.innerHTML = `🔄 리롤 (1회 가능)`;
+    const rerollText = lang === 'EN' ? '🔄 Reroll (1 available)' : '🔄 리롤 (1회 가능)';
+    rerollDiv.innerHTML = rerollText;
     rerollDiv.style.opacity = '1';
     rerollDiv.onclick = () => {
       player.rerollCount++;
@@ -197,7 +207,8 @@ function showLevelUpScreen() {
       showLevelUpScreen();
     };
   } else {
-    rerollDiv.innerHTML = `🔄 리롤 (사용 완료)`;
+    const usedText = lang === 'EN' ? '🔄 Reroll (Used)' : '🔄 리롤 (사용 완료)';
+    rerollDiv.innerHTML = usedText;
     rerollDiv.style.opacity = '0.5';
     rerollDiv.style.cursor = 'not-allowed';
     rerollDiv.onclick = null;
@@ -292,7 +303,10 @@ function updateUI() {
   
   const expPercent = (player.exp / player.expToNextLevel) * 100;
   document.getElementById('expFill').style.width = `${expPercent}%`;
-  document.getElementById('levelText').textContent = `레벨 ${player.level}`;
+  
+  // 언어에 따라 레벨 텍스트 변경
+  const t = typeof translations !== 'undefined' && typeof currentLanguage !== 'undefined' ? translations[currentLanguage] : { level: '레벨' };
+  document.getElementById('levelText').textContent = `${t.level} ${player.level}`;
   
   const augmentSlots = document.querySelectorAll('.augment-slot');
   const statSlots = document.querySelectorAll('.stat-slot');
@@ -389,6 +403,7 @@ function showVictoryScreen() {
   `;
   
   // 제목
+  const lang = typeof currentLanguage !== 'undefined' ? currentLanguage : 'KR';
   const title = document.createElement('div');
   title.style.cssText = `
     font-size: clamp(48px, 6vw, 72px);
@@ -399,7 +414,8 @@ function showVictoryScreen() {
     margin-bottom: clamp(20px, 3vw, 30px);
     animation: pulse 2s infinite;
   `;
-  title.textContent = '🎉 게임 클리어! 🎉';
+  const victoryText = lang === 'EN' ? '🎉 Victory! 🎉' : '🎉 게임 클리어! 🎉';
+  title.textContent = victoryText;
   container.appendChild(title);
   
   // 플레이 시간
@@ -459,7 +475,7 @@ function showVictoryScreen() {
   });
   container.appendChild(weaponsContainer);
   
-  // 스탯 증강
+  // 스텟 증강
   const statsTitle = document.createElement('div');
   statsTitle.style.cssText = `
     font-size: clamp(20px, 2.5vw, 28px);
@@ -468,7 +484,8 @@ function showVictoryScreen() {
     color: #ffd700;
     margin-bottom: clamp(15px, 2vw, 20px);
   `;
-  statsTitle.textContent = '스탯 증강';
+  const statAugText = lang === 'EN' ? 'Stat Augments' : '스텟 증강';
+  statsTitle.textContent = statAugText;
   container.appendChild(statsTitle);
   
   const statIcons = {
@@ -549,7 +566,8 @@ function showVictoryScreen() {
   };
   
   // 맵 선택 버튼
-  const mapSelectBtn = createButton('맵 선택', '#4a90e2');
+  const mapSelectText = lang === 'EN' ? 'Map Select' : '맵 선택';
+  const mapSelectBtn = createButton(mapSelectText, '#4a90e2');
   mapSelectBtn.onclick = () => {
     canvasOverlay.style.display = 'none';
     location.reload();
@@ -557,7 +575,8 @@ function showVictoryScreen() {
   buttonsContainer.appendChild(mapSelectBtn);
   
   // 메인 화면 버튼
-  const mainBtn = createButton('메인 화면', '#e74c3c');
+  const mainMenuText = lang === 'EN' ? 'Main Menu' : '메인 화면';
+  const mainBtn = createButton(mainMenuText, '#e74c3c');
   mainBtn.onclick = () => {
     canvasOverlay.style.display = 'none';
     location.reload();
@@ -596,6 +615,7 @@ function showGameOverScreen() {
   `;
   
   // 제목
+  const lang = typeof currentLanguage !== 'undefined' ? currentLanguage : 'KR';
   const title = document.createElement('div');
   title.style.cssText = `
     font-size: clamp(48px, 6vw, 72px);
@@ -619,7 +639,8 @@ function showGameOverScreen() {
   `;
   const minutes = Math.floor(game.time / 60);
   const seconds = Math.floor(game.time % 60);
-  survivalTime.textContent = `생존 시간: ${minutes}분 ${seconds}초`;
+  const survivalText = lang === 'EN' ? `Survival Time: ${minutes}min ${seconds}sec` : `생존 시간: ${minutes}분 ${seconds}초`;
+  survivalTime.textContent = survivalText;
   container.appendChild(survivalTime);
   
   // 통계 정보
@@ -631,10 +652,14 @@ function showGameOverScreen() {
     margin-bottom: clamp(20px, 3vw, 30px);
   `;
   
-  const statItems = [
+  const statItems = lang === 'EN' ? [
+    { label: '🏆 Final Level', value: player.level },
+    { label: '🐛 Bosses Killed', value: `${game.bossKillCount}` },
+    { label: '⚔️ Augments', value: `${player.augments.length}` }
+  ] : [
     { label: '🏆 최종 레벨', value: player.level },
     { label: '🐛 보스 처치', value: `${game.bossKillCount}마리` },
-    { label: '⚔️ 획득 증강', value: `${player.augments.length}개` }
+    { label: '⚔️ 획등 증강', value: `${player.augments.length}개` }
   ];
   
   statItems.forEach(item => {
@@ -706,7 +731,8 @@ function showGameOverScreen() {
   };
   
   // 메인 화면 버튼
-  const mainBtn = createButton('🏠 메인 화면', '#e74c3c');
+  const mainMenuText = lang === 'EN' ? '🏠 Main Menu' : '🏠 메인 화면';
+  const mainBtn = createButton(mainMenuText, '#e74c3c');
   mainBtn.onclick = () => {
     canvasOverlay.style.display = 'none';
     location.reload();

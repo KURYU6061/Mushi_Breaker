@@ -229,8 +229,8 @@ body {
 }
 
 .character-image {
-  width: clamp(80px, 12vw, 140px);
-  height: clamp(80px, 12vw, 140px);
+  width: 120px;
+  height: 120px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -250,15 +250,15 @@ body {
 }
 
 .character-name {
-  font-size: clamp(18px, 2.5vw, 28px);
+  font-size: 24px;
   font-weight: bold;
-  margin: 0 0 clamp(8px, 1.5vh, 15px) 0;
+  margin: 0 0 12px 0;
   color: #ffffff;
 }
 
 .character-weapon {
-  font-size: clamp(14px, 1.8vw, 18px);
-  margin: clamp(4px, 0.8vh, 8px) 0;
+  font-size: 16px;
+  margin: 6px 0;
   color: #cccccc;
 }
 
@@ -268,8 +268,8 @@ body {
 }
 
 .character-specialty {
-  font-size: clamp(14px, 1.8vw, 18px);
-  margin: clamp(4px, 0.8vh, 8px) 0;
+  font-size: 16px;
+  margin: 6px 0;
   color: #cccccc;
 }
 

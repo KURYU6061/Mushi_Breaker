@@ -22,8 +22,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: clamp(20px, 4vw, 40px);
-  padding: clamp(10px, 2vh, 20px);
+  gap: 30px;
+  padding: 15px;
   order: 1;
 }
 
@@ -31,7 +31,7 @@
 #healthBar {
   position: relative;
   width: 100%;
-  height: clamp(20px, 2.5vh, 25px);
+  height: 22px;
   background-color: rgba(0, 0, 0, 0.7);
   border-top: 2px solid #fff;
   order: 2;
@@ -55,7 +55,7 @@
   align-items: center;
   color: #fff;
   font-weight: bold;
-  font-size: clamp(11px, 1.3vw, 14px);
+  font-size: 12px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   z-index: 1;
 }
@@ -64,7 +64,7 @@
 #expBar {
   position: relative;
   width: 100%;
-  height: clamp(15px, 2vh, 20px);
+  height: 18px;
   background-color: rgba(0, 0, 0, 0.7);
   border-top: 2px solid #fff;
   order: 3;
@@ -73,12 +73,12 @@
 /* 증강 슬롯 */
 #augmentSlots {
   display: flex;
-  gap: clamp(6px, 1.2vw, 12px);
+  gap: 10px;
 }
 
 .augment-slot {
-  width: clamp(50px, 6vw, 70px);
-  height: clamp(50px, 6vw, 70px);
+  width: 60px;
+  height: 60px;
   background-color: rgba(0, 0, 0, 0.7);
   border: 3px solid #fff;
   border-radius: 8px;
@@ -86,7 +86,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: clamp(24px, 3vw, 36px);
+  font-size: 32px;
   transition: all 0.3s ease;
 }
 
@@ -97,12 +97,12 @@
 /* 스텟 슬롯 */
 #statSlots {
   display: flex;
-  gap: clamp(6px, 1.2vw, 12px);
+  gap: 10px;
 }
 
 .stat-slot {
-  width: clamp(50px, 6vw, 70px);
-  height: clamp(50px, 6vw, 70px);
+  width: 60px;
+  height: 60px;
   background-color: rgba(0, 0, 0, 0.7);
   border: 3px solid #888;
   border-radius: 8px;
@@ -110,7 +110,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: clamp(20px, 2.5vw, 30px);
+  font-size: 26px;
   transition: all 0.3s ease;
 }
 
@@ -137,7 +137,7 @@
   align-items: center;
   color: #fff;
   font-weight: bold;
-  font-size: clamp(10px, 1.2vw, 12px);
+  font-size: 11px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   z-index: 1;
 }

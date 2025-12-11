@@ -111,6 +111,38 @@ const translations = {
     guideButton: "게임 설명",
     languageModalTitle: "언어 선택",
     guideModalTitle: "게임 가이드",
+    
+    // 게임 내 UI 번역
+    level: "레벨",
+    gameOver: "게임 오버",
+    victory: "게임 클리어!",
+    clearTime: "클리어 타임",
+    minutes: "분",
+    seconds: "초",
+    obtainedAugments: "획등한 증강",
+    statAugments: "스텟 증강",
+    mapSelect: "맵 선택",
+    mainMenu: "메인 화면",
+    skillUp: "숙련도 상승!",
+    rerollRemaining: "리롤 남은 횟수",
+    
+    // 캐릭터
+    poacher: "밀렭꾼",
+    arsonist: "방화범",
+    criminal: "범죄자",
+    startWeapon: "시작 무기",
+    specialty: "특화",
+    
+    // 스텟
+    attackSpeed: "공격속도",
+    attackPower: "공격력",
+    attackRange: "공격범위",
+    moveSpeed: "이동속도",
+    maxHealth: "최대체력",
+    pickupRange: "획등범위",
+    projectileSpeed: "투사체속도",
+    cooldown: "쿨타임",
+    duration: "지속시간",
     guideItems: [
       {
         title: "게임 목적",
@@ -169,6 +201,38 @@ const translations = {
     guideButton: "Game Guide",
     languageModalTitle: "Select Language",
     guideModalTitle: "Game Guide",
+    
+    // 게임 내 UI 번역
+    level: "Level",
+    gameOver: "Game Over",
+    victory: "Victory!",
+    clearTime: "Clear Time",
+    minutes: "min",
+    seconds: "sec",
+    obtainedAugments: "Obtained Augments",
+    statAugments: "Stat Augments",
+    mapSelect: "Map Select",
+    mainMenu: "Main Menu",
+    skillUp: "Skill Up!",
+    rerollRemaining: "Reroll Remaining",
+    
+    // 캐릭터
+    poacher: "Poacher",
+    arsonist: "Arsonist",
+    criminal: "Criminal",
+    startWeapon: "Start Weapon",
+    specialty: "Specialty",
+    
+    // 스텟
+    attackSpeed: "Attack Speed",
+    attackPower: "Attack Power",
+    attackRange: "Attack Range",
+    moveSpeed: "Move Speed",
+    maxHealth: "Max Health",
+    pickupRange: "Pickup Range",
+    projectileSpeed: "Projectile Speed",
+    cooldown: "Cooldown",
+    duration: "Duration",
     guideItems: [
       {
         title: "Game Objective",
@@ -627,6 +691,8 @@ function handleLanguageModalClick(clickX, clickY) {
       clickY >= langButtonY && clickY <= langButtonY + 50) {
     currentLanguage = 'KR';
     menuState.showingLanguageModal = false;
+    updateTitleButtonsStyle();
+    updateGameUILanguage();
     showTitleButtons();
     return;
   }
@@ -636,6 +702,8 @@ function handleLanguageModalClick(clickX, clickY) {
       clickY >= langButtonY && clickY <= langButtonY + 50) {
     currentLanguage = 'EN';
     menuState.showingLanguageModal = false;
+    updateTitleButtonsStyle();
+    updateGameUILanguage();
     showTitleButtons();
     return;
   }
@@ -870,9 +938,11 @@ function startGameWithCharacter(character) {
   if (gameUI) gameUI.style.display = 'block';
   
   // 초기 UI 업데이트
-  setTimeout(() => {
-    updateUI();
-  }, 0);
+  if (typeof updateUI === 'function') {
+    setTimeout(() => {
+      updateUI();
+    }, 0);
+  }
   
   console.log(`게임 시작! 캐릭터: ${character.nameKR}, 맵: ${menuState.selectedMap?.nameKR}`);
 }
@@ -956,9 +1026,66 @@ loadMapImage();
 // DOM 버튼 관리
 // ========================================
 
+function updateTitleButtonsStyle() {
+  const t = translations[currentLanguage];
+  const startBtn = document.getElementById('startGameBtn');
+  const langBtn = document.getElementById('languageBtn');
+  const guideBtn = document.getElementById('guideBtn');
+  
+  if (currentLanguage === 'EN') {
+    // 영어 모드: 텍스트 버튼
+    [startBtn, langBtn, guideBtn].forEach(btn => {
+      if (btn) {
+        btn.style.backgroundImage = 'none';
+        btn.style.backgroundColor = 'rgba(255, 215, 0, 0.9)';
+        btn.style.color = '#1a1a2e';
+        btn.style.fontSize = '24px';
+        btn.style.fontWeight = 'bold';
+        btn.style.border = '3px solid #fff';
+        btn.style.borderRadius = '10px';
+        btn.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.3)';
+      }
+    });
+    
+    if (startBtn) startBtn.textContent = t.startButton;
+    if (langBtn) langBtn.textContent = t.languageButton;
+    if (guideBtn) guideBtn.textContent = t.guideButton;
+  } else {
+    // 한국어 모드: 이미지 버튼
+    if (startBtn) {
+      startBtn.style.backgroundImage = 'url(\'img/ui/title_gstart.png\')';
+      startBtn.style.backgroundColor = 'transparent';
+      startBtn.style.color = 'transparent';
+      startBtn.style.border = 'none';
+      startBtn.style.borderRadius = '0';
+      startBtn.style.boxShadow = 'none';
+      startBtn.textContent = '';
+    }
+    if (langBtn) {
+      langBtn.style.backgroundImage = 'url(\'img/ui/title_lang.png\')';
+      langBtn.style.backgroundColor = 'transparent';
+      langBtn.style.color = 'transparent';
+      langBtn.style.border = 'none';
+      langBtn.style.borderRadius = '0';
+      langBtn.style.boxShadow = 'none';
+      langBtn.textContent = '';
+    }
+    if (guideBtn) {
+      guideBtn.style.backgroundImage = 'url(\'img/ui/title_gIndex.png\')';
+      guideBtn.style.backgroundColor = 'transparent';
+      guideBtn.style.color = 'transparent';
+      guideBtn.style.border = 'none';
+      guideBtn.style.borderRadius = '0';
+      guideBtn.style.boxShadow = 'none';
+      guideBtn.textContent = '';
+    }
+  }
+}
+
 function showTitleButtons() {
   const titleButtons = document.getElementById('titleMenuButtons');
   if (titleButtons && menuState.currentScreen === 'title' && !menuState.showingLanguageModal && !menuState.showingGuideModal) {
+    updateTitleButtonsStyle();
     titleButtons.style.display = 'flex';
   }
 }
@@ -1014,6 +1141,47 @@ function initBackButton() {
   }
 }
 
+function updateCharacterButtonsLanguage() {
+  // AUGMENT_TYPES가 로드되지 않았으면 함수 실행하지 않음
+  if (typeof AUGMENT_TYPES === 'undefined') {
+    return;
+  }
+  
+  const currentLang = currentLanguage;
+  const t = translations[currentLang];
+  
+  const characterBtns = [
+    { id: 'characterBtn1', character: characters[0] },
+    { id: 'characterBtn2', character: characters[1] },
+    { id: 'characterBtn3', character: characters[2] }
+  ];
+  
+  characterBtns.forEach(({ id, character }) => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      const nameEl = btn.querySelector('.character-name');
+      const weaponEl = btn.querySelector('.character-weapon');
+      const specialtyEl = btn.querySelector('.character-specialty');
+      
+      if (nameEl) {
+        nameEl.textContent = currentLang === 'EN' ? character.nameEN : character.nameKR;
+      }
+      
+      if (weaponEl) {
+        const weaponName = AUGMENT_TYPES[character.weapon].name;
+        const startWeaponText = currentLang === 'EN' ? t.startWeapon : '시작 무기';
+        weaponEl.innerHTML = `${startWeaponText}: <span>${weaponName}</span>`;
+      }
+      
+      if (specialtyEl) {
+        const specialtyText = currentLang === 'EN' ? t.specialty : '특화';
+        const specialtyName = currentLang === 'EN' ? character.specialtyEN : character.specialtyKR;
+        specialtyEl.innerHTML = `${specialtyText}: <span>${specialtyName}</span>`;
+      }
+    }
+  });
+}
+
 function initCharacterButtons() {
   const characterBtns = [
     { id: 'characterBtn1', character: characters[0] },
@@ -1031,6 +1199,23 @@ function initCharacterButtons() {
       });
     }
   });
+  
+  // 초기 언어로 업데이트
+  updateCharacterButtonsLanguage();
+}
+
+// 게임 UI 언어 업데이트
+function updateGameUILanguage() {
+  const t = translations[currentLanguage];
+  
+  // 레벨 텍스트 업데이트
+  const levelText = document.getElementById('levelText');
+  if (levelText && typeof player !== 'undefined') {
+    levelText.textContent = `${t.level} ${player.level}`;
+  }
+  
+  // 캐릭터 버튼 언어 업데이트 (항상 호출, 함수 내부에서 체크)
+  updateCharacterButtonsLanguage();
 }
 
 // 페이지 로드 시 이벤트 초기화
@@ -1040,10 +1225,12 @@ if (document.readyState === 'loading') {
     initTitleButtons();
     initBackButton();
     initCharacterButtons();
+    updateTitleButtonsStyle();
   });
 } else {
   initMenuEvents();
   initTitleButtons();
   initBackButton();
   initCharacterButtons();
+  updateTitleButtonsStyle();
 }
