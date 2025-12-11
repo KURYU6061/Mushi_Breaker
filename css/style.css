@@ -68,15 +68,17 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0px;
-  margin-top: clamp(100px, 20vh, 200px); /* 타이틀 아래 위치 조정 */
+  margin-top: 200px; /* 타이틀 아래 위치 조정 */
   pointer-events: auto;
   z-index: 100;
 }
 
 /* 픽셀 아트 버튼 공통 스타일 */
 .pixel-btn {
-  width: min(400px, 80vw);
-  height: min(140px, 28vw);
+  width: 400px;
+  max-width: 80vw;
+  height: 140px;
+  max-height: 28vw;
   border: none;
   background-color: transparent;
   background-size: 100% 100%; /* 이미지를 버튼 크기에 정확히 맞춤 */
@@ -141,10 +143,12 @@ body {
    ======================================== */
 #backButton {
   position: absolute;
-  top: clamp(15px, 3vh, 30px);
-  right: clamp(20px, 10vw, 140px);
-  width: min(160px, 20vw);
-  height: min(120px, 15vh);
+  top: 30px;
+  right: 140px;
+  width: 160px;
+  max-width: 20vw;
+  height: 120px;
+  max-height: 15vh;
   border: none;
   background-color: transparent;
   background-image: url('../img/ui/back.png');
@@ -182,19 +186,21 @@ body {
   transform: translate(-50%, -50%);
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(20px, 4vw, 60px);
+  gap: 60px;
   align-items: center;
   justify-content: center;
   pointer-events: auto;
   z-index: 100;
-  margin-top: clamp(20px, 4vh, 50px);
+  margin-top: 50px;
   max-width: 95vw;
   padding: 10px;
 }
 
 .character-btn {
-  width: min(380px, 45vw);
-  height: min(200px, 25vh);
+  width: 380px;
+  max-width: 45vw;
+  height: 200px;
+  max-height: 25vh;
   min-width: 280px;
   min-height: 150px;
   border: 3px solid #ffffff;
@@ -203,8 +209,8 @@ body {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   align-items: center;
-  padding: clamp(10px, 2vw, 20px);
-  gap: clamp(10px, 2vw, 20px);
+  padding: 20px;
+  gap: 20px;
   
   /* 픽셀 아트가 흐려지지 않게 */
   image-rendering: pixelated;
