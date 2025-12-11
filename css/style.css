@@ -68,17 +68,17 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0px;
-  margin-top: 200px; /* 타이틀 아래 위치 조정 */
+  margin-top: 260px; /* 타이틀 아래 위치 조정 */
   pointer-events: auto;
   z-index: 100;
 }
 
 /* 픽셀 아트 버튼 공통 스타일 */
 .pixel-btn {
-  width: 400px;
-  max-width: 80vw;
-  height: 140px;
-  max-height: 28vw;
+  width: 560px;
+  max-width: 85vw;
+  height: 196px;
+  max-height: 35vw;
   border: none;
   background-color: transparent;
   background-size: 100% 100%; /* 이미지를 버튼 크기에 정확히 맞춤 */

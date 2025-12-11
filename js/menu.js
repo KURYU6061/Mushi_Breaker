@@ -145,8 +145,8 @@ const translations = {
     duration: "지속시간",
     guideItems: [
       {
-        title: "게임 목적",
-        content: "갑자기 불어난 거대화 벌레들로 인하여 나라가 마비될 정도의 위험에 처했다.\n적들을 처치하여 경험을 쌓고 무기를 강화하세요!"
+        title: "게임 목적 & 조작법",
+        content: "갑자기 불어난 거대화 벌레들로 인하여 나라가 마비될 정도의 위험에 처했다.\n적들을 처치하여 경험을 쌓고 무기를 강화하세요!\n\n[조작법]\n• 이동: WASD 또는 방향키 (↑←↓→)\n• 무기는 자동으로 발사됩니다"
       },
       {
         title: "게임 방식",
@@ -235,8 +235,8 @@ const translations = {
     duration: "Duration",
     guideItems: [
       {
-        title: "Game Objective",
-        content: "Giant mutated insects have caused a national crisis.\nDefeat enemies to gain experience and upgrade your weapons!"
+        title: "Game Objective & Controls",
+        content: "Giant mutated insects have caused a national crisis.\nDefeat enemies to gain experience and upgrade your weapons!\n\n[Controls]\n• Movement: WASD or Arrow Keys (↑←↓→)\n• Weapons fire automatically"
       },
       {
         title: "Gameplay",
