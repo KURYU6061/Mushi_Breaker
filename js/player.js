@@ -40,9 +40,21 @@ function updatePlayer(deltaTime) {
     player.facingAngle = Math.atan2(nearestEnemy.y - player.y, nearestEnemy.x - player.x);
   }
   
-  // 맵 경계 제한
-  player.x = Math.max(player.size / 2, Math.min(MAP_SIZE - player.size / 2, player.x));
-  player.y = Math.max(player.size / 2, Math.min(MAP_SIZE - player.size / 2, player.y));
+  // 무적 시간 감소
+  if (player.invincibleTime > 0) {
+    player.invincibleTime -= deltaTime;
+    if (player.invincibleTime < 0) player.invincibleTime = 0;
+  }
+  
+  // 맵 경계 제한 (개별 너비/높이 조정)
+  if (typeof currentMap !== 'undefined' && currentMap.playableArea) {
+    const area = currentMap.playableArea;
+    player.x = Math.max(area.minX, Math.min(area.maxX, player.x));
+    player.y = Math.max(area.minY, Math.min(area.maxY, player.y));
+  } else {
+    player.x = Math.max(0, Math.min(MAP_SIZE, player.x));
+    player.y = Math.max(0, Math.min(MAP_SIZE, player.y));
+  }
   
   // 드랍 아이템 습득
   for (let i = dropItems.length - 1; i >= 0; i--) {

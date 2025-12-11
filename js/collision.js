@@ -32,16 +32,21 @@ function separateEnemies(deltaTime) {
 }
 
 // 플레이어와 적 충돌 체크
-function checkPlayerEnemyCollision() {
+function checkPlayerEnemyCollision(deltaTime) {
+  // 무적 시간 중에는 피해 받지 않음
+  const isInvincible = player.invincibleTime > 0;
+  
   for (const enemy of enemies) {
     const dx = enemy.x - player.x;
     const dy = enemy.y - player.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
     const minDist = (player.size + enemy.size) / 2;
     
-    if (dist < minDist) {
-      // 플레이어 피해
-      player.health -= enemy.type.damage * 0.016; // 초당 피해로 조정
+    if (dist < minDist && !isInvincible) {
+      // 플레이어 피해 (공격력 그대로 적용)
+      player.health -= enemy.type.damage;
+      player.health = Math.max(0, player.health);
+      player.invincibleTime = 1.0; // 1초 무적 시간
       
       // 적을 밀어냄
       if (dist > 0) {
@@ -60,26 +65,58 @@ function checkProjectileCollisions() {
     const proj = projectiles[i];
     let hit = false;
     
-    for (let j = enemies.length - 1; j >= 0; j--) {
-      const enemy = enemies[j];
-      const dx = enemy.x - proj.x;
-      const dy = enemy.y - proj.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      
-      if (dist <= proj.size + enemy.size / 2) {
-        enemy.health -= proj.damage;
+    // 기관총 탄환 처리
+    if (proj instanceof MachineGunBullet) {
+      for (let j = enemies.length - 1; j >= 0; j--) {
+        const enemy = enemies[j];
+        const dx = enemy.x - proj.x;
+        const dy = enemy.y - proj.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
         
-        // 넉백 저항 적용
-        const knockbackResist = enemy.type.knockbackResist || 0;
-        const effectiveKnockback = enemy.type.knockback * (1 - knockbackResist);
+        // 탄환 크기는 진화 여부에 따라 다름
+        const bulletSize = proj.isEvolved ? 12 : 6;
         
-        const angle = Math.atan2(dy, dx);
-        enemy.x += Math.cos(angle) * effectiveKnockback;
-        enemy.y += Math.sin(angle) * effectiveKnockback;
+        if (dist <= bulletSize + enemy.size / 2) {
+          enemy.health -= proj.damage;
+          
+          // 넉백 저항 적용
+          const knockbackResist = enemy.type.knockbackResist || 0;
+          const effectiveKnockback = enemy.type.knockback * (1 - knockbackResist);
+          
+          const angle = Math.atan2(dy, dx);
+          enemy.x += Math.cos(angle) * effectiveKnockback;
+          enemy.y += Math.sin(angle) * effectiveKnockback;
+          
+          if (!proj.pierce) {
+            hit = true;
+            break;
+          }
+        }
+      }
+    } 
+    // 일반 투사체 처리
+    else {
+      for (let j = enemies.length - 1; j >= 0; j--) {
+        const enemy = enemies[j];
+        const dx = enemy.x - proj.x;
+        const dy = enemy.y - proj.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
         
-        if (!proj.pierce) {
-          hit = true;
-          break;
+        if (dist <= proj.size + enemy.size / 2) {
+          enemy.health -= proj.damage;
+          
+          // 넉백 저항 적용
+          const knockbackResist = enemy.type.knockbackResist || 0;
+          const effectiveKnockback = enemy.type.knockback * (1 - knockbackResist);
+          
+          const angle = Math.atan2(dy, dx);
+          enemy.x += Math.cos(angle) * effectiveKnockback;
+          enemy.y += Math.sin(angle) * effectiveKnockback;
+          
+          if (!proj.pierce) {
+            hit = true;
+            break;
+          }
         }
       }
     }
@@ -99,7 +136,12 @@ function checkEnemyProjectileCollisions() {
     const dist = Math.sqrt(dx * dx + dy * dy);
     
     if (dist <= proj.size + player.size / 2) {
-      player.health -= proj.damage;
+      // 무적 시간 중이 아니면 피해
+      if (player.invincibleTime <= 0) {
+        player.health -= proj.damage;
+        player.health = Math.max(0, player.health);
+        player.invincibleTime = 1.0; // 1초 무적 시간
+      }
       enemyProjectiles.splice(i, 1);
     }
   }

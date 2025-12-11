@@ -40,6 +40,13 @@ function spawnEnemy(type) {
   x = Math.max(0, Math.min(MAP_SIZE, x));
   y = Math.max(0, Math.min(MAP_SIZE, y));
   
+  // 적 이미지 로드
+  let imageObj = null;
+  if (enemyType.image) {
+    imageObj = new Image();
+    imageObj.src = enemyType.image;
+  }
+  
   enemies.push({
     x,
     y,
@@ -51,6 +58,8 @@ function spawnEnemy(type) {
     attackTimer: 0,
     isBoss: enemyType.isBoss || false,
     size: enemyType.size,
+    imageObj: imageObj,
+    angle: 0, // 회전 각도
   });
 }
 
@@ -187,26 +196,11 @@ function updateEnemySpawningPark(deltaTime) {
   }
 }
 
-// 기본 적 생성 시스템 (도시, 숲속 맵용 - 추후 커스터마이징)
+// 기본 적 생성 시스템 (도시, 숲속 맵용)
 function updateEnemySpawningDefault(deltaTime) {
-  // 도시 맵 전용 대규모 물량 공세 시스템
-  if (game.currentMap === 'city') {
+  // 도시 맵과 숲속 맵 모두 동일한 대규모 물량 공세 시스템 사용
+  if (game.currentMap === 'city' || game.currentMap === 'forest') {
     updateEnemySpawningCity(deltaTime);
-  } else {
-    // 숲속 맵은 기본 시스템 사용
-    game.spawnTimer += deltaTime;
-    
-    const currentEnemyCount = enemies.length;
-    const maxEnemies = 30;
-    const spawnInterval = 2.0;
-    
-    if (game.spawnTimer >= spawnInterval && currentEnemyCount < maxEnemies) {
-      game.spawnTimer = 0;
-      
-      const types = ['LARVA', 'LOCUST', 'HORNET', 'BEETLE', 'SCORPION'];
-      const randomType = types[Math.floor(Math.random() * types.length)];
-      spawnEnemy(randomType);
-    }
   }
 }
 
@@ -327,8 +321,9 @@ function updateEnemySpawningCity(deltaTime) {
     }
   }
   
-  // 보스 생성 시스템 (5분부터)
-  if (!game.bossAlive && gameTime >= 300) {
+  // 보스 생성 시스템 (1분부터, 공원과 동일한 기믹)
+  if (!game.bossAlive && gameTime >= 60) {
+    // 보스 생성 5초 전 경고
     if (!game.bossWarning && gameTime >= game.nextBossTime - 5) {
       game.bossWarning = true;
       game.bossWarningTimer = 0;
@@ -343,7 +338,7 @@ function updateEnemySpawningCity(deltaTime) {
         game.bossAlive = true;
         game.bossWarning = false;
         game.bossWarningTimer = 0;
-        console.log('🐛 강화된 보스 사마귀 등장! (HP: 7500)');
+        console.log('🐛 보스 사마귀 등장!');
       }
     }
   }
@@ -370,6 +365,13 @@ function spawnSurroundAttack() {
     const selectedType = types[Math.floor(Math.random() * types.length)];
     const enemyType = ENEMY_TYPES[selectedType];
     
+    // 적 이미지 로드
+    let imageObj = null;
+    if (enemyType.image) {
+      imageObj = new Image();
+      imageObj.src = enemyType.image;
+    }
+    
     enemies.push({
       x: clampedX,
       y: clampedY,
@@ -381,6 +383,8 @@ function spawnSurroundAttack() {
       attackTimer: 0,
       isBoss: false,
       size: enemyType.size,
+      imageObj: imageObj,
+      angle: 0,
     });
   }
 }
@@ -441,11 +445,15 @@ function updateEnemies(deltaTime) {
       if (dist > 0) {
         enemy.vx = (dx / dist) * enemy.type.speed;
         enemy.vy = (dy / dist) * enemy.type.speed;
+        enemy.angle = Math.atan2(dy, dx); // 플레이어 방향 각도 저장
       }
     } else if (enemy.type.behavior === 'ranged') {
       const dx = player.x - enemy.x;
       const dy = player.y - enemy.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      // 항상 플레이어 방향을 향함
+      enemy.angle = Math.atan2(dy, dx);
       
       if (dist > enemy.type.attackRange) {
         enemy.vx = (dx / dist) * enemy.type.speed;

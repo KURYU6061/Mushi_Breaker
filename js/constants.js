@@ -212,7 +212,8 @@ const ENEMY_TYPES = {
   LARVA: {
     name: '유충',
     color: '#90EE90',
-    size: 20,
+    image: 'img/enemy/larva.png',
+    size: 35, // 작은 유충 크기
     speed: 60,
     health: 15,
     damage: 5,
@@ -225,7 +226,8 @@ const ENEMY_TYPES = {
   LOCUST: {
     name: '메뚚기',
     color: '#8B4513',
-    size: 25,
+    image: 'img/enemy/locust.png',
+    size: 45, // 중간 크기
     speed: 120,
     health: 50,
     damage: 10,
@@ -238,7 +240,8 @@ const ENEMY_TYPES = {
   HORNET: {
     name: '말벌',
     color: '#FFD700',
-    size: 20,
+    image: 'img/enemy/hornet.png',
+    size: 40, // 날렵한 크기
     speed: 100,
     health: 30,
     damage: 15,
@@ -253,7 +256,8 @@ const ENEMY_TYPES = {
   BEETLE: {
     name: '딱정벌레',
     color: '#2F4F2F',
-    size: 35,
+    image: 'img/enemy/beetle.png',
+    size: 55, // 큰 크기 (탱커)
     speed: 70,
     health: 300,
     damage: 20,
@@ -266,7 +270,8 @@ const ENEMY_TYPES = {
   SCORPION: {
     name: '전갈',
     color: '#8B0000',
-    size: 30,
+    image: 'img/enemy/scorpion.png',
+    size: 50, // 중간~큰 크기
     speed: 150,
     health: 150,
     damage: 25,
@@ -279,9 +284,10 @@ const ENEMY_TYPES = {
   MANTIS: {
     name: '사마귀',
     color: '#00FF00',
-    size: 60,
+    image: 'img/enemy/mantis.png',
+    size: 80, // 보스 크기 (더 크게)
     speed: 110,
-    health: 7500,
+    health: 1875, // 7500 / 4
     damage: 40,
     exp: 200,
     knockback: 0,

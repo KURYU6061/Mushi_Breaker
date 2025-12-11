@@ -58,8 +58,9 @@ const player = {
   attackTimer: 0,
   projectileSpeed: 400,
   color: '#4080ff',
-  image: null, // 캐릭터 이미지 경로
+  image: null, // 캠릭터 이미지 경로
   imageObj: null, // 로드된 이미지 객체
+  invincibleTime: 0, // 무적 시간 (1초)
   
   augments: [{ id: 'MACHINE_GUN', level: 1 }],
   selectedStats: [], // 선택된 스텟 증강 기록
@@ -90,6 +91,7 @@ const dropItems = []; // 드롭 아이템 배열 추가
 
 // 무기 전용 오브젝트 배열
 const mines = [];
+const explosions = []; // 폭발 이펙트 배열
 const firePatches = [];
 const drones = [];
 const pheromones = [];

@@ -74,20 +74,26 @@ function gameLoop(currentTime) {
     updateCamera();
     
     separateEnemies(deltaTime);
-    checkPlayerEnemyCollision();
+    checkPlayerEnemyCollision(deltaTime);
     checkProjectileCollisions();
     checkEnemyProjectileCollisions();
     checkExpOrbPickup();
     
     updateUI();
     
-    // 게임 클리어 체크 (공원 맵만)
-    if (game.currentMap === 'park') {
+    // 게임 클리어 체크 (공원, 도시 맵)
+    if (game.currentMap === 'park' || game.currentMap === 'city') {
       if (game.bossKillCount >= 6 && !game.isCleared) {
         game.isCleared = true;
         game.isPaused = true;
         showVictoryScreen();
       }
+    }
+    
+    // 게임 오버 체크 (체력 0 이하)
+    if (player.health <= 0) {
+      game.isPaused = true;
+      showGameOverScreen();
     }
   }
   
@@ -97,4 +103,5 @@ function gameLoop(currentTime) {
 }
 
 console.log('Mushi Breaker 게임 시작!');
+
 requestAnimationFrame(gameLoop);

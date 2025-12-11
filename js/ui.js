@@ -594,3 +594,150 @@ function showVictoryScreen() {
   document.head.appendChild(style);
 }
 
+// 게임 오버 화면 표시
+function showGameOverScreen() {
+  canvasOverlay.style.display = 'flex';
+  canvasOverlay.innerHTML = '';
+  
+  const container = document.createElement('div');
+  container.style.cssText = `
+    width: clamp(600px, 75vw, 900px);
+    background: linear-gradient(135deg, rgba(20, 10, 10, 0.98) 0%, rgba(40, 20, 20, 0.98) 100%);
+    border: 5px solid #ff4444;
+    border-radius: 20px;
+    padding: clamp(20px, 3vw, 40px);
+    box-shadow: 0 0 50px rgba(255, 68, 68, 0.8), inset 0 0 30px rgba(255, 68, 68, 0.2);
+    max-height: 90vh;
+    overflow-y: auto;
+  `;
+  
+  // 제목
+  const title = document.createElement('div');
+  title.style.cssText = `
+    font-size: clamp(48px, 6vw, 72px);
+    font-weight: bold;
+    text-align: center;
+    color: #ff4444;
+    text-shadow: 0 0 20px rgba(255, 68, 68, 1), 0 0 40px rgba(255, 68, 68, 0.5);
+    margin-bottom: clamp(20px, 3vw, 30px);
+    animation: pulse 2s infinite;
+  `;
+  title.textContent = '💀 GAME OVER 💀';
+  container.appendChild(title);
+  
+  // 생존 시간
+  const survivalTime = document.createElement('div');
+  survivalTime.style.cssText = `
+    font-size: clamp(24px, 3vw, 32px);
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: clamp(15px, 2vw, 20px);
+  `;
+  const minutes = Math.floor(game.time / 60);
+  const seconds = Math.floor(game.time % 60);
+  survivalTime.textContent = `생존 시간: ${minutes}분 ${seconds}초`;
+  container.appendChild(survivalTime);
+  
+  // 통계 정보
+  const stats = document.createElement('div');
+  stats.style.cssText = `
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: clamp(10px, 1.5vw, 15px);
+    margin-bottom: clamp(20px, 3vw, 30px);
+  `;
+  
+  const statItems = [
+    { label: '🏆 최종 레벨', value: player.level },
+    { label: '🐛 보스 처치', value: `${game.bossKillCount}마리` },
+    { label: '⚔️ 획득 증강', value: `${player.augments.length}개` }
+  ];
+  
+  statItems.forEach(item => {
+    const statDiv = document.createElement('div');
+    statDiv.style.cssText = `
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 68, 68, 0.5);
+      border-radius: 10px;
+      padding: clamp(12px, 1.5vw, 15px);
+      text-align: center;
+    `;
+    
+    const label = document.createElement('div');
+    label.style.cssText = `
+      font-size: clamp(14px, 1.8vw, 18px);
+      color: #ffaaaa;
+      margin-bottom: 5px;
+    `;
+    label.textContent = item.label;
+    
+    const value = document.createElement('div');
+    value.style.cssText = `
+      font-size: clamp(20px, 2.5vw, 28px);
+      font-weight: bold;
+      color: #ffffff;
+    `;
+    value.textContent = item.value;
+    
+    statDiv.appendChild(label);
+    statDiv.appendChild(value);
+    stats.appendChild(statDiv);
+  });
+  
+  container.appendChild(stats);
+  
+  // 버튼 컨테이너
+  const buttonsContainer = document.createElement('div');
+  buttonsContainer.style.cssText = `
+    display: flex;
+    gap: clamp(10px, 1.5vw, 15px);
+    justify-content: center;
+    flex-wrap: wrap;
+  `;
+  
+  const createButton = (text, bgColor) => {
+    const btn = document.createElement('button');
+    btn.textContent = text;
+    btn.style.cssText = `
+      padding: clamp(12px, 1.5vw, 15px) clamp(24px, 3vw, 30px);
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: bold;
+      background: ${bgColor};
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    `;
+    btn.onmouseover = () => {
+      btn.style.transform = 'translateY(-3px)';
+      btn.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.4)';
+    };
+    btn.onmouseout = () => {
+      btn.style.transform = 'translateY(0)';
+      btn.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
+    };
+    return btn;
+  };
+  
+  // 재시도 버튼
+  const retryBtn = createButton('🔄 재시도', '#e67e22');
+  retryBtn.onclick = () => {
+    canvasOverlay.style.display = 'none';
+    location.reload();
+  };
+  buttonsContainer.appendChild(retryBtn);
+  
+  // 메인 화면 버튼
+  const mainBtn = createButton('🏠 메인 화면', '#e74c3c');
+  mainBtn.onclick = () => {
+    canvasOverlay.style.display = 'none';
+    location.reload();
+  };
+  buttonsContainer.appendChild(mainBtn);
+  
+  container.appendChild(buttonsContainer);
+  canvasOverlay.appendChild(container);
+}
+

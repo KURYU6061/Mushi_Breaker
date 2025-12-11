@@ -3,9 +3,21 @@
 // ========================================
 
 function drawMap() {
-  const mapColor = (typeof currentMap !== 'undefined') ? currentMap.color : '#2a2a2a';
-  ctx.fillStyle = mapColor;
+  // 검은색 배경 (맵 이미지 밖 영역)
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+  
+  // 맵 이미지 그리기
+  if (typeof mapImage !== 'undefined' && mapImage.complete && mapImage.naturalWidth > 0) {
+    const mapScreen = worldToScreen(0, 0);
+    ctx.drawImage(mapImage, mapScreen.x, mapScreen.y, MAP_SIZE, MAP_SIZE);
+  } else {
+    // 이미지 로드 전 대체 색상
+    const mapColor = (typeof currentMap !== 'undefined') ? currentMap.color : '#2a2a2a';
+    const mapScreen = worldToScreen(0, 0);
+    ctx.fillStyle = mapColor;
+    ctx.fillRect(mapScreen.x, mapScreen.y, MAP_SIZE, MAP_SIZE);
+  }
   
   // 보스 경고 효과
   if (game.bossWarning) {
@@ -99,18 +111,29 @@ function drawWeaponEffects() {
   // 지뢰
   for (const mine of mines) {
     const screenPos = worldToScreen(mine.x, mine.y);
-    const alpha = Math.max(0.3, 1 - mine.age / mine.lifetime);
     
-    ctx.fillStyle = mine.isEvolved ? `rgba(255, 100, 0, ${alpha})` : `rgba(255, 0, 0, ${alpha})`;
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, 8, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.strokeStyle = `rgba(255, 0, 0, ${alpha * 0.3})`;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, mine.radius, 0, Math.PI * 2);
-    ctx.stroke();
+    if (mine instanceof ProximityMine) {
+      mine.draw(ctx, screenPos);
+    } else {
+      // 레거시 지뢰 (연쇄 지뢰 등)
+      const alpha = Math.max(0.3, 1 - mine.age / mine.lifetime);
+      ctx.fillStyle = mine.isEvolved ? `rgba(255, 100, 0, ${alpha})` : `rgba(255, 0, 0, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(screenPos.x, screenPos.y, 8, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.strokeStyle = `rgba(255, 0, 0, ${alpha * 0.3})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(screenPos.x, screenPos.y, mine.radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }
+  
+  // 폭발 이펙트
+  for (const explosion of explosions) {
+    const screenPos = worldToScreen(explosion.x, explosion.y);
+    explosion.draw(ctx, screenPos);
   }
   
   // 화염 파티클 (새로운 파티클 시스템)
@@ -119,45 +142,62 @@ function drawWeaponEffects() {
     particle.draw(ctx, screenPos);
   }
   
-  // 화염 패치 렌더링 제거 (피해 판정은 유지, 시각 효과만 제거)
+  // 화염 장판 (FirePatch)
+  for (const fire of firePatches) {
+    if (fire instanceof FirePatch) {
+      const screenPos = worldToScreen(fire.x, fire.y);
+      fire.draw(ctx, screenPos);
+    }
+  }
   
   for (const drone of drones) {
     const screenPos = worldToScreen(drone.x, drone.y);
     
-    ctx.fillStyle = drone.isEvolved ? '#ffd700' : '#00ffff';
-    ctx.save();
-    ctx.translate(screenPos.x, screenPos.y);
-    ctx.rotate(drone.angle * 2);
-    
-    ctx.beginPath();
-    ctx.moveTo(drone.size, 0);
-    ctx.lineTo(0, drone.size * 0.5);
-    ctx.lineTo(-drone.size, 0);
-    ctx.lineTo(0, -drone.size * 0.5);
-    ctx.closePath();
-    ctx.fill();
-    
-    ctx.restore();
+    if (drone instanceof BladeDrone) {
+      drone.draw(ctx, screenPos);
+    } else {
+      // 레거시 드론 렌더링 (호환성 유지)
+      ctx.fillStyle = drone.isEvolved ? '#ffd700' : '#00ffff';
+      ctx.save();
+      ctx.translate(screenPos.x, screenPos.y);
+      ctx.rotate(drone.angle * 2);
+      
+      ctx.beginPath();
+      ctx.moveTo(drone.size, 0);
+      ctx.lineTo(0, drone.size * 0.5);
+      ctx.lineTo(-drone.size, 0);
+      ctx.lineTo(0, -drone.size * 0.5);
+      ctx.closePath();
+      ctx.fill();
+      
+      ctx.restore();
+    }
   }
   
   for (const bomb of pheromones) {
     const screenPos = worldToScreen(bomb.x, bomb.y);
-    const pulseScale = 1 + Math.sin(bomb.age * 10) * 0.2;
     
-    ctx.fillStyle = bomb.isEvolved ? 'rgba(255, 0, 255, 0.5)' : 'rgba(255, 255, 0, 0.5)';
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, 10 * pulseScale, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.strokeStyle = 'rgba(255, 255, 0, 0.3)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, bomb.attractRadius * pulseScale, 0, Math.PI * 2);
-    ctx.stroke();
+    if (bomb instanceof PheromoneBomb) {
+      bomb.draw(ctx, screenPos);
+    } else {
+      // 레거시 폭탄 렌더링
+      const pulseScale = 1 + Math.sin(bomb.age * 10) * 0.2;
+      
+      ctx.fillStyle = bomb.isEvolved ? 'rgba(255, 0, 255, 0.5)' : 'rgba(255, 255, 0, 0.5)';
+      ctx.beginPath();
+      ctx.arc(screenPos.x, screenPos.y, 10 * pulseScale, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.strokeStyle = 'rgba(255, 255, 0, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(screenPos.x, screenPos.y, bomb.attractRadius * pulseScale, 0, Math.PI * 2);
+      ctx.stroke();
+    }
   }
   
   for (const lightning of lightnings) {
-    if (lightning instanceof LightningBolt) {
+    if (lightning instanceof ElectricChain || lightning instanceof LightningBolt) {
       lightning.draw(ctx, worldToScreen);
     }
   }
@@ -165,50 +205,71 @@ function drawWeaponEffects() {
   for (const disk of disks) {
     const screenPos = worldToScreen(disk.x, disk.y);
     
-    ctx.fillStyle = disk.isEvolved ? '#ff00ff' : '#00ffff';
-    ctx.save();
-    ctx.translate(screenPos.x, screenPos.y);
-    ctx.rotate(disk.age * 10);
-    
-    ctx.beginPath();
-    ctx.arc(0, 0, disk.size, 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(0, 0, disk.size, 0, Math.PI * 2);
-    ctx.stroke();
-    
-    ctx.restore();
+    if (disk instanceof RicochetDisk) {
+      disk.draw(ctx, screenPos);
+    } else {
+      // 레거시 디스크 렌더링
+      ctx.fillStyle = disk.isEvolved ? '#ff00ff' : '#00ffff';
+      ctx.save();
+      ctx.translate(screenPos.x, screenPos.y);
+      ctx.rotate(disk.age * 10);
+      
+      ctx.beginPath();
+      ctx.arc(0, 0, disk.size, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, disk.size, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.restore();
+    }
   }
   
   for (const cloud of poisonClouds) {
     const screenPos = worldToScreen(cloud.x, cloud.y);
-    const alpha = Math.max(0.2, 1 - cloud.age / cloud.duration);
     
-    ctx.fillStyle = cloud.isEvolved ? `rgba(100, 0, 150, ${alpha * 0.5})` : `rgba(0, 255, 0, ${alpha * 0.4})`;
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, cloud.radius, 0, Math.PI * 2);
-    ctx.fill();
+    if (cloud instanceof PoisonCloud) {
+      cloud.draw(ctx, screenPos);
+    } else {
+      // 레거시 구름 렌더링 (피해 판정용, 보이지 않음)
+      // 시각 효과는 PoisonCloud 인스턴스가 처리
+    }
   }
   
   for (const wave of shockwaves) {
     const screenPos = worldToScreen(wave.x, wave.y);
-    const alpha = 1 - wave.age / wave.lifetime;
     
-    ctx.strokeStyle = wave.isEvolved ? `rgba(255, 100, 0, ${alpha})` : `rgba(255, 255, 255, ${alpha})`;
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, wave.radius, 0, Math.PI * 2);
-    ctx.stroke();
+    if (wave instanceof StompWave) {
+      wave.draw(ctx, screenPos);
+    } else {
+      // 레거시 충격파 렌더링
+      const alpha = 1 - wave.age / wave.lifetime;
+      
+      ctx.strokeStyle = wave.isEvolved ? `rgba(255, 100, 0, ${alpha})` : `rgba(255, 255, 255, ${alpha})`;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(screenPos.x, screenPos.y, wave.radius, 0, Math.PI * 2);
+      ctx.stroke();
+    }
   }
 }
 
 function drawPlayer() {
   const screenPos = worldToScreen(player.x, player.y);
   
-  // 캐릭터 이미지가 로드되었으면 이미지로 그리기
+  // 무적 시간 깜박임 효과 (0.1초마다 토글)
+  if (player.invincibleTime > 0) {
+    const blinkInterval = 0.1;
+    const blinkCycle = Math.floor(player.invincibleTime / blinkInterval);
+    if (blinkCycle % 2 === 0) {
+      return; // 깜박임 효과로 안 그림
+    }
+  }
+  
+  // 캠릭터 이미지가 로드되었으면 이미지로 그리기
   if (player.imageObj && player.imageObj.complete) {
     const imageSize = player.size * 2; // 이미지 크기
     
@@ -254,10 +315,28 @@ function drawEnemies() {
   for (const enemy of enemies) {
     const screenPos = worldToScreen(enemy.x, enemy.y);
     
-    ctx.fillStyle = enemy.type.color;
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, enemy.size / 2, 0, Math.PI * 2);
-    ctx.fill();
+    // 이미지가 있으면 이미지 렌더링 (회전 적용 + 90도 오프셋), 없으면 원으로 폴백
+    if (enemy.type.image && enemy.imageObj && enemy.imageObj.complete) {
+      const size = enemy.size;
+      
+      ctx.save();
+      ctx.translate(screenPos.x, screenPos.y);
+      ctx.rotate((enemy.angle || 0) + Math.PI / 2); // 90도(π/2) 오른쪽 회전
+      ctx.drawImage(
+        enemy.imageObj,
+        -size / 2,
+        -size / 2,
+        size,
+        size
+      );
+      ctx.restore();
+    } else {
+      // 이미지 로드 전 폴백 (원)
+      ctx.fillStyle = enemy.type.color;
+      ctx.beginPath();
+      ctx.arc(screenPos.x, screenPos.y, enemy.size / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
     
     if (enemy.isBoss) {
       ctx.strokeStyle = '#fff';
@@ -289,10 +368,16 @@ function drawProjectiles() {
   for (const proj of projectiles) {
     const screenPos = worldToScreen(proj.x, proj.y);
     
-    ctx.fillStyle = proj.color || '#ffff00';
-    ctx.beginPath();
-    ctx.arc(screenPos.x, screenPos.y, proj.size, 0, Math.PI * 2);
-    ctx.fill();
+    // 기관총 탄환은 전용 렌더링 메서드 사용
+    if (proj instanceof MachineGunBullet) {
+      proj.draw(ctx, screenPos);
+    } else {
+      // 일반 투사체
+      ctx.fillStyle = proj.color || '#ffff00';
+      ctx.beginPath();
+      ctx.arc(screenPos.x, screenPos.y, proj.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
   
   for (const proj of enemyProjectiles) {

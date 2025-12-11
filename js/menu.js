@@ -32,7 +32,9 @@ const maps = [
     nameEN: 'Park',
     color: '#7cb342',
     bgColor: '#a5d6a7',
-    gridColor: '#81c784'
+    gridColor: '#81c784',
+    imagePath: 'img/map/park.png',
+    playableArea: { minX: 300, maxX: 2650, minY: 500, maxY: 2650 } // 이동 가능 영역
   },
   {
     id: 'city',
@@ -40,7 +42,9 @@ const maps = [
     nameEN: 'City',
     color: '#757575',
     bgColor: '#9e9e9e',
-    gridColor: '#bdbdbd'
+    gridColor: '#bdbdbd',
+    imagePath: 'img/map/ruins.png',
+    playableArea: { minX: 250, maxX: 2750, minY: 650, maxY: 2750 }
   },
   {
     id: 'forest',
@@ -48,7 +52,9 @@ const maps = [
     nameEN: 'Forest',
     color: '#558b2f',
     bgColor: '#689f38',
-    gridColor: '#7cb342'
+    gridColor: '#7cb342',
+    imagePath: 'img/map/forest.png',
+    playableArea: { minX: 300, maxX: 2600, minY: 400, maxY: 2800 }
   }
 ];
 
@@ -149,6 +155,10 @@ const translations = {
       {
         title: "스톰프 부츠",
         content: "이동 거리에 따라 충격파를 발생시켜 주변 적을 공격합니다.\n진화 시 충격파 발생 빈도가 2배 증가합니다."
+      },
+      {
+        title: "무기 진화 조건",
+        content: "모든 무기는 다음 조건을 충족하면 진화합니다:\n\n1️⃣ 무기 레벨 7 이상\n2️⃣ 해당 무기의 특화 스탯 5레벨 이상\n\n특화 스탯:\n• 속사 기관총 → 공격 속도\n• 근접 지뢰 → 공격력\n• 화염방사기 → 공격 범위\n• 회전 칼날 드론 → 획득 범위\n• 페로몬 유도탄 → 최대 체력\n• 전격 체인 → 쿨다운\n• 리코셰 디스크 → 투사체 속도\n• 독가스 분무기 → 지속시간\n• 스톰프 부츠 → 이동 속도\n\n진화 시 시각 효과와 성능이 대폭 향상됩니다!"
       }
     ]
   },
@@ -203,6 +213,10 @@ const translations = {
       {
         title: "Stomp Boots",
         content: "Creates shockwaves based on distance traveled.\nWhen evolved, shockwave frequency doubles."
+      },
+      {
+        title: "Weapon Evolution",
+        content: "All weapons evolve when these conditions are met:\n\n1️⃣ Weapon Level 7 or higher\n2️⃣ Specialized stat Level 5 or higher\n\nSpecialized Stats:\n• Machine Gun → Attack Speed\n• Proximity Mine → Attack Power\n• Flamethrower → Attack Range\n• Blade Drone → Pickup Range\n• Pheromone Bomb → Max Health\n• Electric Chain → Cooldown\n• Ricochet Disk → Projectile Speed\n• Poison Spray → Duration\n• Stomp Boots → Move Speed\n\nEvolution greatly enhances visuals and performance!"
       }
     ]
   }
@@ -794,6 +808,8 @@ function startGameWithCharacter(character) {
   // 선택된 맵 적용
   if (menuState.selectedMap) {
     currentMap = menuState.selectedMap;
+    // 맵 이미지 로드
+    loadMapImage();
   }
   
   // 게임 오브젝트 초기화
@@ -803,6 +819,7 @@ function startGameWithCharacter(character) {
   expOrbs.length = 0;
   dropItems.length = 0;
   mines.length = 0;
+  explosions.length = 0;
   firePatches.length = 0;
   fireParticles.length = 0;
   drones.length = 0;
@@ -913,6 +930,17 @@ function handleMenuWheel(e) {
 
 // 현재 맵 설정 (전역)
 let currentMap = maps[0];
+let mapImage = new Image();
+
+// 맵 이미지 로드
+function loadMapImage() {
+  if (currentMap && currentMap.imagePath) {
+    mapImage.src = currentMap.imagePath;
+  }
+}
+
+// 초기 맵 이미지 로드
+loadMapImage();
 
 // ========================================
 // DOM 버튼 관리
