@@ -563,7 +563,12 @@ function showVictoryScreen() {
   const retryBtn = createButton('재시도', '#e67e22');
   retryBtn.onclick = () => {
     canvasOverlay.style.display = 'none';
-    location.reload(); // 게임 재시작
+    // 현재 선택된 캐릭터로 게임 재시작
+    if (typeof menuState !== 'undefined' && menuState.selectedCharacter) {
+      startGameWithCharacter(menuState.selectedCharacter);
+    } else {
+      location.reload();
+    }
   };
   buttonsContainer.appendChild(retryBtn);
   
@@ -725,7 +730,12 @@ function showGameOverScreen() {
   const retryBtn = createButton('🔄 재시도', '#e67e22');
   retryBtn.onclick = () => {
     canvasOverlay.style.display = 'none';
-    location.reload();
+    // 현재 선택된 캐릭터로 게임 재시작
+    if (typeof menuState !== 'undefined' && menuState.selectedCharacter) {
+      startGameWithCharacter(menuState.selectedCharacter);
+    } else {
+      location.reload();
+    }
   };
   buttonsContainer.appendChild(retryBtn);
   

@@ -8,6 +8,20 @@ const canvasOverlay = document.getElementById('canvasOverlay');
 
 // 화면 스케일 정보
 let canvasScale = 1;
+let canvasOffsetX = 0;
+let canvasOffsetY = 0;
+
+// 마우스 좌표를 게임 좌표로 변환하는 헬퍼 함수
+function getGameCoordinates(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = GAME_WIDTH / rect.width;
+  const scaleY = GAME_HEIGHT / rect.height;
+  
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY
+  };
+}
 
 function resizeCanvas() {
   const windowWidth = window.innerWidth;
@@ -30,8 +44,11 @@ function resizeCanvas() {
   canvas.width = GAME_WIDTH;
   canvas.height = GAME_HEIGHT;
   
-  // 스케일 비율 저장 (마우스 이벤트 변환용)
+  // 스케일 비율 및 오프셋 저장 (마우스 이벤트 변환용)
   canvasScale = newWidth / GAME_WIDTH;
+  const rect = canvas.getBoundingClientRect();
+  canvasOffsetX = rect.left;
+  canvasOffsetY = rect.top;
   
   // 오버레이도 Canvas와 동일한 크기로 조정
   if (canvasOverlay) {

@@ -754,6 +754,9 @@ function handleCharacterSelectClick(clickX, clickY) {
 }
 
 function startGameWithCharacter(character) {
+  // 현재 캐릭터 저장 (재시도용)
+  menuState.selectedCharacter = character;
+  
   // 게임 상태 초기화
   game.time = 0;
   game.spawnTimer = 0;
@@ -886,9 +889,8 @@ function initMenuEvents() {
 function handleMenuMouseDown(e) {
   if (!menuState.isShowingMenu || menuState.currentScreen !== 'characterSelect') return;
   
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = GAME_WIDTH / rect.width;
-  dragStartX = (e.clientX - rect.left) * scaleX;
+  const coords = getGameCoordinates(e.clientX, e.clientY);
+  dragStartX = coords.x;
   dragStartOffset = menuState.characterScrollOffset;
   isDragging = true;
   e.preventDefault();
@@ -897,10 +899,8 @@ function handleMenuMouseDown(e) {
 function handleMenuMouseMove(e) {
   if (!isDragging) return;
   
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = GAME_WIDTH / rect.width;
-  const currentX = (e.clientX - rect.left) * scaleX;
-  const deltaX = dragStartX - currentX;
+  const coords = getGameCoordinates(e.clientX, e.clientY);
+  const deltaX = dragStartX - coords.x;
   
   menuState.characterScrollOffset = Math.max(0, dragStartOffset + deltaX);
   e.preventDefault();
